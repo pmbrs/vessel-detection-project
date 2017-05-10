@@ -1,0 +1,2959 @@
+#LyX 2.0 created this file. For more info see http://www.lyx.org/
+\lyxformat 413
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref true
+\pdf_bookmarks true
+\pdf_bookmarksnumbered false
+\pdf_bookmarksopen false
+\pdf_bookmarksopenlevel 1
+\pdf_breaklinks false
+\pdf_pdfborder false
+\pdf_colorlinks false
+\pdf_backref false
+\pdf_pdfusetitle true
+\papersize a4paper
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\use_mhchem 1
+\use_mathdots 1
+\cite_engine basic
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Labeling Tool - User Manual
+\end_layout
+
+\begin_layout Author
+Ricardo Ribeiro (ribeiro@isr.ist.utl.pt)
+\end_layout
+
+\begin_layout Standard
+\begin_inset CommandInset toc
+LatexCommand tableofcontents
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset FloatList figure
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Software version
+\end_layout
+
+\begin_layout Standard
+This manual documents the version 0.1.1 of the labeling tool (labelingtool
+\begin_inset space ~
+\end_inset
+
+v0.1.1).
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+For the training and testing of vision algorithms it is necessary to use
+ image sequences that where manually labeled.
+\end_layout
+
+\begin_layout Standard
+The labeling task consists in tagging all objects in the image with a rectangle.
+ Such operation needs to be done manually since the labeling is to be considered
+ as the ground truth against which the results of the algorithms are compared.
+ Any kind of error in the labeling process will have a negative impact in
+ the performance of the algorithms and will compromise the reliability of
+ the test results.
+\end_layout
+
+\begin_layout Standard
+This manual process is quite heavy and long, specially if the number of
+ images is large, as normally is the case for video sequences.
+ For that reason, this tools was developed aiming to alleviate the weight
+ of this task.
+ This was achieved in several ways.
+ 
+\end_layout
+
+\begin_layout Standard
+One way was to create an very light and fast interface that minimizes the
+ number of operations necessary for each label.
+ This was achieved by developing this tool in C++ (the OpenCV libraries
+ where used).
+ There was care into making the execution of all operations the fastest
+ possible so that the user of the tool can immediately see the result of
+ the commands executed, even if the commands are given in fast sequence.
+ The manual tools that existed previously, developed in Matlab, where too
+ slow.
+\end_layout
+
+\begin_layout Standard
+Another way to alleviate the users work was to provide automatic mechanisms
+ to create the labels without dispensing the user of the task of adjusting,
+ at least, of verifying them.
+ These automations try to place new label the closest possible of the intended
+ final position for them.
+ The user only needs to do small adjustments or to confirm the labels correctnes
+s.
+\end_layout
+
+\begin_layout Standard
+This tool is generic and can be applied to label any kind of object in any
+ kind of images.
+ Its limitation is that only rectangular labels are supported.
+\end_layout
+
+\begin_layout Section
+Instalation and compilation of the tool
+\end_layout
+
+\begin_layout Subsection
+Obtaining the tool (SVN)
+\end_layout
+
+\begin_layout Standard
+The tool is in the folder
+\end_layout
+
+\begin_layout LyX-Code
+devel/tools/labeling_tool
+\end_layout
+
+\begin_layout Standard
+in the Seagull SVN repository located at the ISR servers.
+ To download the tool use the command:
+\end_layout
+
+\begin_layout LyX-Code
+svn checkout svn://svn.isr.ist.utl.pt/seagull/devel/tools/labeling_tool
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Dependências-e-sistemas-suportados"
+
+\end_inset
+
+Dependencies and supported OS's
+\end_layout
+
+\begin_layout Standard
+This tool depends on the OpenCV libraries which need to be installed before
+ build time.
+\end_layout
+
+\begin_layout Standard
+To build the tool is also necessary to have cmake installed.
+\end_layout
+
+\begin_layout Standard
+The tool was developed in linux, so it compiles and works well in this operating
+ system.
+\end_layout
+
+\begin_layout Standard
+It was also compiled and tested in Mac OS
+\begin_inset space ~
+\end_inset
+
+X.
+ This version is usable but has some problems in the window resizing features
+ described in subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:tamanho-da-janela"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Compilar-a-ferramenta"
+
+\end_inset
+
+Build the tool
+\end_layout
+
+\begin_layout Standard
+To build the tool use the following commands:
+\end_layout
+
+\begin_layout LyX-Code
+cd labeling_tool
+\end_layout
+
+\begin_layout LyX-Code
+mkdir build
+\end_layout
+
+\begin_layout LyX-Code
+cd build
+\end_layout
+
+\begin_layout LyX-Code
+cmake ..
+\end_layout
+
+\begin_layout LyX-Code
+make
+\end_layout
+
+\begin_layout Section
+Tool execution
+\end_layout
+
+\begin_layout Subsection
+Command line
+\end_layout
+
+\begin_layout Standard
+The tool is executed inside the build folder (see section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Compilar-a-ferramenta"
+
+\end_inset
+
+) using the command
+\end_layout
+
+\begin_layout LyX-Code
+./labeling_tool [options] <video_file>
+\end_layout
+
+\begin_layout Standard
+To obtain help use
+\end_layout
+
+\begin_layout LyX-Code
+./labeling_tool -h
+\end_layout
+
+\begin_layout Subsection
+Video file
+\end_layout
+
+\begin_layout Standard
+The video file can be in any format supported by OpenCV (examples: .mpg,
+ .avi, .mkv, etc.).
+ Name the file in the command line.
+ For example:
+\end_layout
+
+\begin_layout LyX-Code
+./labeling_tool lanchaArgos_clip1.avi
+\end_layout
+
+\begin_layout Standard
+If the file is in a different folder, then also include the path.
+\end_layout
+
+\begin_layout LyX-Code
+./labeling_tool videos/lanchaArgos_clip1.avi
+\end_layout
+
+\begin_layout Subsection
+Labeling file
+\end_layout
+
+\begin_layout Standard
+By default, the filename where the labels are saved is the same as the video
+ file with its extension replace by .gt.txt.
+ For example, the command
+\end_layout
+
+\begin_layout LyX-Code
+./labeling_tool videos/lanchaArgos_clip1.avi
+\end_layout
+
+\begin_layout Standard
+creates the labeling file
+\end_layout
+
+\begin_layout LyX-Code
+videos/lanchaArgos_clip1.gt.txt
+\end_layout
+
+\begin_layout Standard
+Alternatively, a different filename can be specified using the -d option.
+\end_layout
+
+\begin_layout LyX-Code
+./labeling_tool -d labels.gt.txt lanchaArgos_clip1.avi
+\end_layout
+
+\begin_layout Standard
+The labeling file format (labelingtool
+\begin_inset space ~
+\end_inset
+
+v0.1) is a simple text file with one line per label.
+ Each line has the following format:
+\end_layout
+
+\begin_layout LyX-Code
+<frame number> <x> <y> <width> <height> <object id> <1(temporary)/0(final)>
+\end_layout
+
+\begin_layout Standard
+The file format is also documented in the tools's help.
+\end_layout
+
+\begin_layout LyX-Code
+./labeling_tool -h
+\end_layout
+
+\begin_layout Subsection
+Autosave e backup
+\end_layout
+
+\begin_layout Standard
+Every 30 seconds a backup file with extension .autosave is saved with all
+ labels and changes made so far.
+ This file is deleted when the program exits normally.
+\end_layout
+
+\begin_layout Standard
+There is also a backup file that is coppied from the original file before
+ the program saves the new file.
+ This backup file has the same filename as the original but with a tilde
+ (~) added (example: labels.gt.txt~).
+\end_layout
+
+\begin_layout Section
+Using the tool
+\end_layout
+
+\begin_layout Subsection
+General use
+\end_layout
+
+\begin_layout Subsubsection
+Help (
+\begin_inset Quotes eld
+\end_inset
+
+h
+\begin_inset Quotes erd
+\end_inset
+
+ key)
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/help/Screenshot from 2014-10-28 16_52_26.png
+	width 90text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Help
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Ajuda"
+
+\end_inset
+
+Help - Press the 
+\begin_inset Quotes eld
+\end_inset
+
+h
+\begin_inset Quotes erd
+\end_inset
+
+ key.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+An help screen is always available at any moment (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Ajuda"
+
+\end_inset
+
+).
+ It contains all the key shortcuts available and a brief description of
+ the corresponding commands.
+ Press 
+\begin_inset Quotes eld
+\end_inset
+
+h
+\begin_inset Quotes erd
+\end_inset
+
+ to call the help screen and press 
+\begin_inset Quotes eld
+\end_inset
+
+h
+\begin_inset Quotes erd
+\end_inset
+
+ again to exit from it.
+ 
+\end_layout
+
+\begin_layout Standard
+The tool continues to work normally even when the help screen is active.
+ The screen itself is translucent and the mouse and keyboard are still active,
+ so the user can keep working while seeing the help screen.
+\end_layout
+
+\begin_layout Subsubsection
+Keyboard
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/help/help.svg
+	width 100line%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Keyboard Map
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:mapa-do-teclado"
+
+\end_inset
+
+Keyboard map showing all available the commands (this map is available at
+ labeling_tool/doc/keyboard_map.pdf).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The commands available in the tool are almost all executed through the use
+ of the keyboard (see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:mapa-do-teclado"
+
+\end_inset
+
+).
+ There are keys or combinations of keys to execute all operations.
+ Ergonomics was taken into account when assigning the shortcut keys so that
+ the number of necessary movements of the user hands and fingers was minimized,
+ not only for single command but also for sequences of commands.
+\end_layout
+
+\begin_layout Standard
+The keyboard map from Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:mapa-do-teclado"
+
+\end_inset
+
+ is also available at
+\end_layout
+
+\begin_layout LyX-Code
+labeling_tool/doc/keyboard_map.pdf 
+\end_layout
+
+\begin_layout Standard
+in a file ready to be printed for reference.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Note:
+\series default
+ This tool was developed based on the Portuguese keyboard layout from Portugal.
+ For other keyboard layouts the commands may be located differently.
+\end_layout
+
+\begin_layout Subsubsection
+Mouse
+\end_layout
+
+\begin_layout Standard
+It is possible to use the mouse, but that option is more useful for large
+ movements, which are rare.
+ It is preferable to keep the hands on the keyboard instead of waisting
+ time moving the hand between the mouse and the keyboard.
+\end_layout
+
+\begin_layout Standard
+The mouse can be used to move or to modify a label by clicking and dragging.
+ The point where the user clicks defines the operation.
+ For more information see subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:modificar-labels"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Subsubsection
+Save
+\end_layout
+
+\begin_layout Standard
+Contrary to what is usual, there is no specific command to save the labels
+ file because the file is automatically saved when the program exits (when
+ the user presses the ESC key).
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+
+\series bold
+Tip:
+\series default
+ to exit the program without saving go to the terminal where the program
+ was started and press CTRL+
+\begin_inset Quotes erd
+\end_inset
+
+c
+\begin_inset Quotes erd
+\end_inset
+
+.
+ In this way the program is immediately killed without having the opportunity
+ to save the file.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Every 30 seconds, a file with .autosave extension is saved with all current
+ changes.
+ This file is deleted when the program exits normally.
+\end_layout
+
+\begin_layout Subsubsection
+Exit
+\end_layout
+
+\begin_layout Standard
+Press the ESCAPE key.
+ The labels file is saved automatically.
+\end_layout
+
+\begin_layout Subsubsection
+Navigate the video
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/frame_info/Screenshot from 2014-09-29 17_33_12.png
+	width 90text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Information
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Informação"
+
+\end_inset
+
+Information - by pressing the 
+\begin_inset Quotes eld
+\end_inset
+
+v
+\begin_inset Quotes erd
+\end_inset
+
+ key the frame number and object ID is shown in the upper right corner of
+ the image.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There are many key to go forward and backward on the video file.
+ The following is available:
+\end_layout
+
+\begin_layout Itemize
+play and stop the video - SPACE key
+\end_layout
+
+\begin_layout Itemize
+seek backward/forward by 1 frame - 
+\begin_inset Quotes eld
+\end_inset
+
+,
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ keys
+\end_layout
+
+\begin_layout Itemize
+seek backward/forward by 10 frames - 
+\begin_inset Quotes eld
+\end_inset
+
+m
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+-
+\begin_inset Quotes erd
+\end_inset
+
+ keys
+\end_layout
+
+\begin_layout Itemize
+seek backward/forward by 100 frames - 
+\begin_inset Quotes eld
+\end_inset
+
+;
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+:
+\begin_inset Quotes erd
+\end_inset
+
+ keys ( i.e., SHIFT + 
+\begin_inset Quotes eld
+\end_inset
+
+,
+\begin_inset Quotes erd
+\end_inset
+
+ and SHIFT + 
+\begin_inset Quotes eld
+\end_inset
+
+.
+\begin_inset Quotes erd
+\end_inset
+
+ )
+\end_layout
+
+\begin_layout Itemize
+goto first frame - 
+\begin_inset Quotes eld
+\end_inset
+
+M
+\begin_inset Quotes erd
+\end_inset
+
+ key ( i.e., SHIFT + 
+\begin_inset Quotes eld
+\end_inset
+
+m
+\begin_inset Quotes erd
+\end_inset
+
+ )
+\end_layout
+
+\begin_layout Itemize
+goto last frame - 
+\begin_inset Quotes eld
+\end_inset
+
+_
+\begin_inset Quotes erd
+\end_inset
+
+ key ( i.e., SHIFT + 
+\begin_inset Quotes eld
+\end_inset
+
+-
+\begin_inset Quotes erd
+\end_inset
+
+ )
+\end_layout
+
+\begin_layout Standard
+Is is also possible to find the previous/next frame which:
+\end_layout
+
+\begin_layout Itemize
+contains a temporary label - SHIFT + 
+\begin_inset Quotes eld
+\end_inset
+
+k
+\begin_inset Quotes erd
+\end_inset
+
+ and SHIFT + 
+\begin_inset Quotes eld
+\end_inset
+
+l
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Itemize
+contains a final label - 
+\begin_inset Quotes eld
+\end_inset
+
+k
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+l
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Press 
+\begin_inset Quotes eld
+\end_inset
+
+v
+\begin_inset Quotes erd
+\end_inset
+
+ to show the current frame number in the top right corner of the image (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Informação"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:zoom"
+
+\end_inset
+
+Zoom
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/zoom/Screenshot from 2014-09-29 16_27_11.png
+	height 25theight%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+1x
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/zoom/Screenshot from 2014-09-29 16_27_37.png
+	height 25theight%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+2x
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/zoom/Screenshot from 2014-09-29 16_27_46.png
+	height 25theight%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+4x
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Zoom
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Zoom"
+
+\end_inset
+
+Zoom - press the 
+\begin_inset Quotes eld
+\end_inset
+
+z
+\begin_inset Quotes erd
+\end_inset
+
+ key to cyclically change the zoom: 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+1x
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+2x
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+4x(
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+1x
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+
+\begin_inset Formula $\rightarrow$
+\end_inset
+
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+etc.)
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In order to achieve better accuracy, is useful to see in detail the area
+ where the label is placed.
+ Pressing the 
+\begin_inset Quotes eld
+\end_inset
+
+x
+\begin_inset Quotes erd
+\end_inset
+
+ key cyclically changes the zoom between 1 (no zoom), 2 and 4 times zoom
+ (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Zoom"
+
+\end_inset
+
+).
+ All commands work independently of the zoom selected.
+ 
+\end_layout
+
+\begin_layout Standard
+The zoom is automatically centered around the marked label.
+ Any adjustment to the label causes a new centering.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Note:
+\series default
+ This command does not change the window size.
+ To do that see subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:tamanho-da-janela"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Warning1:
+\series default
+ Due to the autocentering feature, the use of the mouse to change the label
+ while zooming can be cumbersome.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Warning2:
+\series default
+ When seeking the video with the zoom enabled, the image can jump unpredictably.
+ This behavior is normal and happens when a frame does not have a defined
+ label, making the centering impossible in that frame.
+ Solution: choose 1x zoom or ignore the image jumps.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:tamanho-da-janela"
+
+\end_inset
+
+Window size
+\end_layout
+
+\begin_layout Standard
+(See subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Dependências-e-sistemas-suportados"
+
+\end_inset
+
+ about the limitation in Mac OS
+\begin_inset space ~
+\end_inset
+
+X.)
+\end_layout
+
+\begin_layout Standard
+The keys 
+\begin_inset Quotes eld
+\end_inset
+
+7
+\begin_inset Quotes erd
+\end_inset
+
+, 
+\begin_inset Quotes eld
+\end_inset
+
+8
+\begin_inset Quotes erd
+\end_inset
+
+ e 
+\begin_inset Quotes eld
+\end_inset
+
+9
+\begin_inset Quotes erd
+\end_inset
+
+ allow to set the size of the window to half, full and double size compared
+ to the original video size.
+ This window size is independent of the zoom selected (see subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:zoom"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+It is also possible to put the window in full screen by pressing the 
+\begin_inset Quotes eld
+\end_inset
+
+0
+\begin_inset Quotes erd
+\end_inset
+
+ key.
+ In this mode the use of the screen is maximized.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Note:
+\series default
+ To obtain a real pixel representation of the video on screen choose the
+ original windows size (
+\begin_inset Quotes eld
+\end_inset
+
+8
+\begin_inset Quotes erd
+\end_inset
+
+ key) and select 1x zoom (subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:zoom"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Note:
+\series default
+ By default, the tools starts with half window size.
+ This helps when the videos are larger than the screen size.
+\end_layout
+
+\begin_layout Subsubsection
+Object ID's
+\end_layout
+
+\begin_layout Standard
+The tool is ready to label different objects on the same image.
+ To each object is assigned a different identification number (ID).
+ The current ID can be incremented or decremented using the 
+\begin_inset Quotes eld
+\end_inset
+
+5
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+6
+\begin_inset Quotes erd
+\end_inset
+
+ keys.
+\end_layout
+
+\begin_layout Standard
+A label with an ID equal to the current ID has the color yellow or green
+ according to the label type (see subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:tipos-de-labels"
+
+\end_inset
+
+).
+ The labels with other ID's are shown in gray.
+\end_layout
+
+\begin_layout Standard
+Pressing the 
+\begin_inset Quotes eld
+\end_inset
+
+x
+\begin_inset Quotes erd
+\end_inset
+
+ key, the ID's are all shown inside the labels they belong to (Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:IDs-dos-objectos"
+
+\end_inset
+
+ and Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:IDs_dos_objectos_detail"
+
+\end_inset
+
+).
+ By pressing 
+\begin_inset Quotes eld
+\end_inset
+
+v
+\begin_inset Quotes erd
+\end_inset
+
+ the currently selected ID is shown in the top right corner of the image.
+\end_layout
+
+\begin_layout Standard
+The commands only affect the label with the current ID.
+ To create, modify or delete a label with a different ID it is mandatory
+ to first use the 
+\begin_inset Quotes eld
+\end_inset
+
+5
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+6
+\begin_inset Quotes erd
+\end_inset
+
+ keys to select the correct ID.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/object_id_info/Screenshot from 2014-09-29 17_34_14.png
+	width 90text%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Object ID's
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:IDs-dos-objectos"
+
+\end_inset
+
+Object ID's - pressing 
+\begin_inset Quotes eld
+\end_inset
+
+x
+\begin_inset Quotes erd
+\end_inset
+
+ will show the ID's inside the label rectangles.
+ Pressing 
+\begin_inset Quotes eld
+\end_inset
+
+v
+\begin_inset Quotes erd
+\end_inset
+
+ will show the current ID in the upper right corner (in this case, ID=0).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Labels
+\end_layout
+
+\begin_layout Subsubsection
+Label anatomy
+\end_layout
+
+\begin_layout Standard
+A label consists in a rectangle with four borders.
+ The object should remain inside the label and the label should be the smallest
+ possible that fully contains the object.
+\end_layout
+
+\begin_layout Standard
+With this tool it is possible to move the label as a whole or to move its
+ borders independently.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:tipos-de-labels"
+
+\end_inset
+
+Label types
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/label_type/Screenshot from 2014-09-29 16_26_43.png
+	width 40text%
+	BoundingBox 350bp 200bp 600bp 380bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Final label.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/label_type/Screenshot from 2014-09-29 16_26_52.png
+	width 40text%
+	BoundingBox 350bp 200bp 600bp 380bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Temporary label.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/label_type/Screenshot from 2014-09-29 17_31_27.png
+	width 40text%
+	BoundingBox 350bp 200bp 600bp 380bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Temporary label (yellow) plus a label with a different ID (gray).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/object_id_info/Screenshot from 2014-09-29 17_34_14.png
+	width 40text%
+	BoundingBox 350bp 200bp 600bp 380bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:IDs_dos_objectos_detail"
+
+\end_inset
+
+A final label (green, ID=0) with a label for a different object (gray, ID=1)
+ with the ID's shown (press 
+\begin_inset Quotes eld
+\end_inset
+
+x
+\begin_inset Quotes erd
+\end_inset
+
+ to show the ID's).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Tipos-de-labels"
+
+\end_inset
+
+Label types.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There are two types of labels (see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Tipos-de-labels"
+
+\end_inset
+
+):
+\end_layout
+
+\begin_layout Itemize
+temporary labels - yellow color
+\end_layout
+
+\begin_layout Itemize
+final labels - green color
+\end_layout
+
+\begin_layout Standard
+When a label is created it's type is by default temporary.
+ This includes manually (subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:criar-labels"
+
+\end_inset
+
+) or automatically (subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:automatismos"
+
+\end_inset
+
+) created labels.
+\end_layout
+
+\begin_layout Standard
+The labels will only become final when:
+\end_layout
+
+\begin_layout Itemize
+are adjusted by the user (subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:modificar-labels"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Itemize
+are marked by the user as final (subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:finalizar-as-labels"
+
+\end_inset
+
+)
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Note:
+\series default
+ It was tried to minimize the number of operations required per label.
+ For that purpose, several commands automatically mark the temporary labels
+ into final ones, avoiding the need for the user to do that explicitly.
+ Is up to the user to make sure that, in the end, all the necessary adjustments
+ where in fact applied to the final label.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:criar-labels"
+
+\end_inset
+
+Label creation
+\end_layout
+
+\begin_layout Standard
+The labels can be created in two ways:
+\end_layout
+
+\begin_layout Itemize
+manually - 
+\begin_inset Quotes eld
+\end_inset
+
++
+\begin_inset Quotes erd
+\end_inset
+
+ key
+\end_layout
+
+\begin_layout Itemize
+automatically - see 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:automatismos"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+When created manually, the label is by default placed near the top left
+ corner of the image.
+ The user should then move the label to the right place and adjust its borders
+ using the keyboard or the mouse.
+\end_layout
+
+\begin_layout Standard
+
+\series bold
+Tip:
+\series default
+ in this case (manual creation) it is probably better to first use the mouse
+ to do a coarse adjustment and after use the keyboard (and zoom) for fine
+ adjustments.
+\end_layout
+
+\begin_layout Subsubsection
+Label deletion
+\end_layout
+
+\begin_layout Standard
+Press SHIFT + 
+\begin_inset Quotes eld
+\end_inset
+
++
+\begin_inset Quotes erd
+\end_inset
+
+ (i.e., 
+\begin_inset Quotes eld
+\end_inset
+
+*
+\begin_inset Quotes erd
+\end_inset
+
+ key) to delete the current label.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:modificar-labels"
+
+\end_inset
+
+Label modification
+\end_layout
+
+\begin_layout Paragraph
+Using the mouse
+\end_layout
+
+\begin_layout Standard
+The mouse can be used to move the label or its borders by means of click,
+ drag and release.
+ The point in the image where the user clicks before dragging defines the
+ operation realized by the mouse.
+\end_layout
+
+\begin_layout Paragraph
+Moving the label border using the mouse
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/mouse_selection/Screenshot from 2014-09-29 17_29_56.png
+	width 40text%
+	BoundingBox 300bp 200bp 600bp 350bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+No selection (moves the whole label).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/mouse_selection/Screenshot from 2014-09-29 16_32_45.png
+	width 40text%
+	BoundingBox 300bp 200bp 600bp 350bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Top border selected.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/mouse_selection/Screenshot from 2014-09-29 17_29_04_annotated.png
+	width 40text%
+	BoundingBox 300bp 200bp 600bp 350bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Top border selected (mouse over horizontal straight line).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset space \hspace*{\fill}
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/mouse_selection/Screenshot from 2014-09-29 17_29_16_annotated.png
+	width 40text%
+	BoundingBox 300bp 200bp 600bp 350bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Right border selected (mouse over vertical straight line).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename images/mouse_selection/Screenshot from 2014-09-29 16_32_36.png
+	width 40text%
+	BoundingBox 300bp 200bp 600bp 350bp
+	clip
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Two borders selected (mouse over the corner).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Ways to use the mouse.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+By pressing the mouse over a border or over the straight line the extends
+ the border will that border will be moved.
+ The selected border or borders will be shown in red color.
+\end_layout
+
+\begin_layout Standard
+Pointing the mouse over the straight line that extends the border (but outside
+ the border) is useful when the label is too small and is difficult to point
+ to the border directly.
+\end_layout
+
+\begin_layout Standard
+It is also possible to move two borders simultaneously by pointing the mouse
+ at the label corner where the borders intercept.
+\end_layout
+
+\begin_layout Paragraph
+Moving the whole label using the mouse
+\end_layout
+
+\begin_layout Standard
+By pressing at any point that does not select any border, the label is moved
+ as an whole without changing its dimensions.
+\end_layout
+
+\begin_layout Paragraph*
+Moving the label border using the keyboard
+\end_layout
+
+\begin_layout Standard
+There are independent keys to move each of the borders and in each direction
+ (see Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:mapa-do-teclado"
+
+\end_inset
+
+).
+ The keys disposition is organized in a logic way in what concerns the border
+ position and the movement direction.
+\end_layout
+
+\begin_layout Standard
+For example, both keys that move the left border (
+\begin_inset Quotes eld
+\end_inset
+
+a
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+s
+\begin_inset Quotes erd
+\end_inset
+
+) are on the left side in relation to the other keys.
+ In addition, the 
+\begin_inset Quotes eld
+\end_inset
+
+a
+\begin_inset Quotes erd
+\end_inset
+
+ key which is on the left side moves the border to the left and the 
+\begin_inset Quotes eld
+\end_inset
+
+s
+\begin_inset Quotes erd
+\end_inset
+
+ key which moves the border to the right is on the right side.
+ Hopefully, this layout is intuitive enough so that the user can adjust
+ the label without needing to look at the keyboard.
+\end_layout
+
+\begin_layout Standard
+The user can even move the border faster, 10 pixels at a time, by simultaneously
+ pressing the SHIFT key with the movement keys.
+\end_layout
+
+\begin_layout Paragraph
+Moving the whole label using the keyboard
+\end_layout
+
+\begin_layout Standard
+There are no specific keys to move the label as a whole.
+ However, that effect is easily achieved using the same keys that move the
+ borders.
+\end_layout
+
+\begin_layout Standard
+Suppose that the user intents to move the label sideways to the left.
+ This is the same as moving both left and right borders to the left by the
+ same ammount.
+ We can then use the 
+\begin_inset Quotes eld
+\end_inset
+
+a
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+f
+\begin_inset Quotes erd
+\end_inset
+
+ keys and press them rapidly one after the other and get the movement desired.
+ Better yet, in most cases (depending on the keyboard hardware) we can even
+ press them simultaneously since the keyboard will still send the two keystrokes
+ one after the other (the ordering does not matter).
+\end_layout
+
+\begin_layout Standard
+This technique even works if we keep pressing the SHIFT key, allowing for
+ large movements of the whole label, 10 pixels each time.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:finalizar-as-labels"
+
+\end_inset
+
+Finalizing the labels
+\end_layout
+
+\begin_layout Standard
+As mentioned before, the labels are created with type equal to temporary.
+ This always happens either for manually or for automatically created labels.
+ Is up for the user to verify all labels, adjust as necessary and then tag
+ the labels as final.
+\end_layout
+
+\begin_layout Standard
+For work optimization purposes, it was tried to minimize the number of keys
+ that is necessary to press for each label.
+ Towards that purpose, some operations, namely the ones that move the label
+ or its borders, automatically set the label type to final.
+ It is assumed that if the operator adjusted the label then it is already
+ final or is in the process of becoming final.
+ It is up to the user to make sure that all necessary adjustments are in
+ fact made.
+\end_layout
+
+\begin_layout Standard
+If no adjustment whatsoever is necessary, the the label can be set to final
+ by pressing SIFT + 
+\begin_inset Quotes eld
+\end_inset
+
+t
+\begin_inset Quotes erd
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Pressing in 
+\begin_inset Quotes eld
+\end_inset
+
+t
+\begin_inset Quotes erd
+\end_inset
+
+ only (without SHIFT) sets the label as temporary again.
+\end_layout
+
+\begin_layout Standard
+There is yet the ENTER key which sets the current label as final and seeks
+ to the next frame.
+ This combination is useful when reviewing many labels (for example, after
+ applying the automatic methods of subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:automatismos"
+
+\end_inset
+
+).
+ Probably in that case, many of the labels do not need adjustment and suffices
+ to mark them as final and go to the next frame, and for all that the user
+ only needs to press ENTER.
+\end_layout
+
+\begin_layout Subsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:automatismos"
+
+\end_inset
+
+Automations
+\end_layout
+
+\begin_layout Standard
+One way to alleviate the task of labeling is to use the available automations
+ that, even though do not intend to replace the manual labeling, they can
+ assist into making it easier.
+ Four automatic methods are available, two of which operate image by image
+ while the other two operate for a set of images in one step.
+\end_layout
+
+\begin_layout Standard
+These methods are described next.
+\end_layout
+
+\begin_layout Subsubsection
+Copy
+\end_layout
+
+\begin_layout Standard
+Press the 
+\begin_inset Quotes eld
+\end_inset
+
+p
+\begin_inset Quotes erd
+\end_inset
+
+ key.
+\end_layout
+
+\begin_layout Standard
+This command copies the label of the previous frame to the current frame.
+ The previous frame label needs to exist and be final, otherwise the command
+ does nothing.
+\end_layout
+
+\begin_layout Standard
+Assuming that the objects move very little from frame to frame, it is faster
+ to copy the previous label and do small adjustments then to create a label
+ from the start for every frame.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Cópia-com-procura"
+
+\end_inset
+
+Copy with search
+\end_layout
+
+\begin_layout Standard
+Press the 
+\begin_inset Quotes eld
+\end_inset
+
+o
+\begin_inset Quotes erd
+\end_inset
+
+ key.
+\end_layout
+
+\begin_layout Standard
+This command is identical to the previous one but, after copying the previous
+ frame label, also searches, in the current frame and in the neighborhood
+ of the copied label, for the image contained in the original label.
+ The search is based on the minimization of the quadratic error between
+ the two images.
+ Finally, the position of the label is adjusted to the position where the
+ error was smaller.
+\end_layout
+
+\begin_layout Standard
+In most cases this approach produces very good labels only requiring occasional
+ small adjustments.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Interpolação-linear"
+
+\end_inset
+
+Linear interpolation
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/interpolation/interpolation_A.png
+	width 90line%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Linear interpolation
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:exemplo-interpolacao"
+
+\end_inset
+
+Example of labels obtained automatically using linear interpolation between
+ frames 0 and 100.
+ The labels at the extremes (frames 0 to 100, green color) where defined
+ manually.
+ The others (yellow) where interpolated.
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this method two non contiguous frames are manually labeled and then linear
+ interpolation is used to estimate the labels of the frames in the middle.
+ See the example in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:exemplo-interpolacao"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+To use this method the following steps are required:
+\end_layout
+
+\begin_layout Enumerate
+create and finalize the label in the first frame of the interval
+\end_layout
+
+\begin_layout Enumerate
+create and finalize the label in the last frame of the interval
+\end_layout
+
+\begin_layout Enumerate
+seek to the last frame of the interval
+\end_layout
+
+\begin_layout Enumerate
+press the 
+\begin_inset Quotes eld
+\end_inset
+
+i
+\begin_inset Quotes erd
+\end_inset
+
+ key
+\end_layout
+
+\begin_layout Standard
+By pressing 
+\begin_inset Quotes eld
+\end_inset
+
+i
+\begin_inset Quotes erd
+\end_inset
+
+, the method goes backward in the video until it finds the previous final
+ label.
+ Then it does an linear interpolation between that label and the current
+ frame label, either creating temporary labels for the frames in between
+ or changing them if they already existed.
+\end_layout
+
+\begin_layout Standard
+This method applies well to cases where the object moves along a line in
+ the image.
+ Many of the movements found are linear or can be approximated by smaller
+ linear sections.
+ Using this method, together with the following method (subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Procura-numa-sequência"
+
+\end_inset
+
+), allows the user to automatically obtain very good approximations to the
+ movement of the object, minimizing the number of manual adjustments necessary.
+\end_layout
+
+\begin_layout Subsubsection
+\begin_inset CommandInset label
+LatexCommand label
+name "sub:Procura-numa-sequência"
+
+\end_inset
+
+Search in a sequence
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Graphics
+	filename images/interpolation/interpolation_B.png
+	width 90line%
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset Argument
+status open
+
+\begin_layout Plain Layout
+Search in a sequence
+\end_layout
+
+\end_inset
+
+
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:exemplo-interpolacao-mais-ajuste"
+
+\end_inset
+
+Labels obtained after applying the search in a sequence method (compare
+ with the previous figure).
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+This method adjusts the temporary labels previously defined (for example,
+ by the previous method - subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Interpolação-linear"
+
+\end_inset
+
+) in a set of frames between two final labels also previously defined.
+ See example in Figure
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:exemplo-interpolacao-mais-ajuste"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+To use this method the following steps are necessary:
+\end_layout
+
+\begin_layout Enumerate
+create the final labels at the two extremes of the frame set
+\end_layout
+
+\begin_layout Enumerate
+create the temporary labels inside the set
+\end_layout
+
+\begin_layout Enumerate
+seek to the frame at the extreme end of the set
+\end_layout
+
+\begin_layout Enumerate
+press the 
+\begin_inset Quotes eld
+\end_inset
+
+u
+\begin_inset Quotes erd
+\end_inset
+
+ key
+\end_layout
+
+\begin_layout Standard
+By pressing 
+\begin_inset Quotes eld
+\end_inset
+
+u
+\begin_inset Quotes erd
+\end_inset
+
+, the method goes back in the video until it finds a final label, thus defining
+ the frame where the set starts.
+ Then it saves the images inside the labels at the extremes of the set.
+\end_layout
+
+\begin_layout Standard
+For each frame within the set, the method searches in the neighborhood of
+ the temporary label of this frame for the two images saved.
+ The search is based on the minimization of the quadratic image error, similar
+ to subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Cópia-com-procura"
+
+\end_inset
+
+, but now two errors are obtained, one for each image.
+ The errors are weighted according to the temporal distance between the
+ current frame and the frames of the two saved images and then the lowest
+ one is chosen.
+ The current temporary label is then adjusted accordingly to the position
+ found for the image chosen.
+\end_layout
+
+\begin_layout Standard
+The weighting of the error based on time distance is justified by the assumption
+ that the closer the images, the similar they should be.
+ Using the two images at the extremes together with this weight allows for
+ the method to work in larger sets with larger time intervals, even if the
+ image of the object varies in those intervals (for example, the object
+ can rotate, change size due to perspective, illumination can change, etc.).
+\end_layout
+
+\begin_layout Standard
+This method is well suited to be used with the previous method (subsection
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:Interpolação-linear"
+
+\end_inset
+
+) since it compensates well for deviations of the object from the linear
+ trajectory.
+ Frequently the object's trajectory is not exactly linear.
+ This can happen because the trajectory is in fact not linear (for example,
+ if it is circular) but can also happen due to factors external to the object,
+ such as camera vibrations or other camera movements.
+\end_layout
+
+\begin_layout Standard
+This method was applied with great success to video sequences with up to
+ 500 frames in a single step.
+\end_layout
+
+\begin_layout Subsection
+Label confirmation and verification
+\end_layout
+
+\begin_layout Standard
+Note that none of this automatic methods eliminate need for the manual verificat
+ion by the user (frame by frame) of the labels estimated automatically.
+ In fact, the labeling tool marks those labels as temporary forcing the
+ user to go by all of them to manually verify, adjust and set them as final.
+ However, these methods obtain very good, and in many cases correct, labels
+ for a large number of frames.
+ By using them, the user only has to do occasional small adjustments and
+ confirm the labels that are already correct.
+ See how in subsections
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:modificar-labels"
+
+\end_inset
+
+
+\begin_inset space ~
+\end_inset
+
+and
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:finalizar-as-labels"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\begin_layout Subsection
+Visual Help
+\end_layout
+
+\begin_layout Subsubsection
+Dynamic range maximization
+\end_layout
+
+\begin_layout Standard
+By pressing the 
+\begin_inset Quotes eld
+\end_inset
+
+1
+\begin_inset Quotes erd
+\end_inset
+
+ key the dynamic range on the luminance of the current image show on screen
+ is maximized.
+ This option determines the maximum and minimum values of the image's luminance
+ and scales it so that all available dynamic range of the screen is used.
+\end_layout
+
+\begin_layout Standard
+This functionality is useful when the images have very low contrast and
+ the object is not easy to be seen.
+\end_layout
+
+\begin_layout Standard
+This luminance scaling is only visual and does not affect the automatic
+ methods of section
+\begin_inset space ~
+\end_inset
+
+
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "sub:automatismos"
+
+\end_inset
+
+, which continue to use the original (non scaled) luminance.
+\end_layout
+
+\begin_layout Standard
+Pressing again the 
+\begin_inset Quotes eld
+\end_inset
+
+1
+\begin_inset Quotes erd
+\end_inset
+
+ key disables this feature.
+\end_layout
+
+\end_body
+\end_document

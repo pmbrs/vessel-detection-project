@@ -1,0 +1,33 @@
+Legend:
+ -    - new issue
+ - ok - fixed
+
+
+2014-10-12
+  - ok - 0001 - When using the "o" command and the previous label is near the screen edges the programs aborts (core dump).
+  -    - 0002 - When video is too smal the help screen ir cropped.
+  - ok - 0003 - Scalling is wrong when zooming 4x and the label is almost touching either right or bottom edges of the screen. Depends on label size. Other edges are OK.
+  -    - 0004 - Remove debug output.
+
+2014-10-17
+  -    - 0005 - Cmake fails when compiling with a new install of Ubuntu 12.4 with ros-hydro: Cmake cannot find FindOpenCV.cmake file.
+                Installing package libopencv-core-devel provides /usr/share/OpenCV/OpenCVConfig-version.cmake and /usr/share/OpenCV/OpenCVConfig.cmake files. In this case cmake does not fail but subsequent make fails.
+
+
+2014-11-07
+  -    - 0006 - Sometimes, when seeking the video back one frame, the wrong image is displayed.
+
+
+2014-11-11
+  -    - 0007 - When the last frame has a label, that label cannot be found by seek previous/next temporay/final label commands ('k','l','K' and 'L' keys).
+
+
+2014-11-12
+  - ok - 0008 - Some filenames contain commas (:) and are no compatible with windows OS.
+
+2014-11-21
+  -    - 0009 - Feature Request: a new automatic method, similar to the 'u' key command, that adjust temporary lanels based on the contents of only one precedind final label.
+
+2016-05-16
+  - ok - 0010 - Play (space bar) does not work and the mouse also does not work. [Could not get the fps value from the video file and the main loop delay became a NAN.]
+

@@ -1,0 +1,9 @@
+2012-10-03
+  - Fixed issue: 0001 - When using the "o" command and the previous label is near the screen edges the programs aborts (core dump).
+  - Fixed issue: 0003 - Scalling is wrong when zooming 4x and the label is almost touching either right or bottom edges of the screen. (...)
+2014-10-28
+  - New Feature       - Option to maximize the dynamic range of the image shown (press the '1' key).
+2014-11-21
+  - Fixed issue: 0008 - Some filenames contain commas (:) and are no compatible with windows OS.
+2016-05-16
+  - Fixed issue: 0010 - Play (space bar) does not work and the mouse also does not work.

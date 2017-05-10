@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/rari/work/posdoc_isr_sea/isr/work/tools/labeling_tool_5/labeling_tool/labeling_tool.cpp
+opencv/cv.h
+/home/rari/work/posdoc_isr_sea/isr/work/tools/labeling_tool_5/labeling_tool/opencv/cv.h
+opencv/highgui.h
+/home/rari/work/posdoc_isr_sea/isr/work/tools/labeling_tool_5/labeling_tool/opencv/highgui.h
+iostream
+/home/rari/work/posdoc_isr_sea/isr/work/tools/labeling_tool_5/labeling_tool/iostream
+sstream
+-
+string
+-
+list
+-
+opencv2/core/core.hpp
+-
+fstream
+-
+ctime
+-
+cstdio
+-
+getopt.h
+-
+
