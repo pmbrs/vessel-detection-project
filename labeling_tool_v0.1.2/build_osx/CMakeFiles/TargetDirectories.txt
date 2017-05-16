@@ -1,0 +1,3 @@
+/Users/francisco/GitHub/vessel-detection-project/labeling_tool_v0.1.2/build_osx/CMakeFiles/rebuild_cache.dir
+/Users/francisco/GitHub/vessel-detection-project/labeling_tool_v0.1.2/build_osx/CMakeFiles/edit_cache.dir
+/Users/francisco/GitHub/vessel-detection-project/labeling_tool_v0.1.2/build_osx/CMakeFiles/labeling_tool.dir
