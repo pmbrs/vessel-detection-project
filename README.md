@@ -6,7 +6,9 @@ There has been growing interest in the topic of maritime surveillance, specially
 
 ## Labeling Tool
 
-To support this research and development of the code we use a lebaling tool to help us on the vessel linearization.
+To support this research and development of the code we use a lebaling tool to help us on the vessel linearization. For the training and testing of vision algorithms it is necessary to use image sequences that where manually labeled.
+
+The labeling task consists in tagging all objects in the image with a rectangle. Such operation needs to be done manually since the labeling is to be considered as the ground truth against which the results of the algorithms are compared. Any kind of error in the labeling process will have a negative impact in the performance of the algorithms and will compromise the reliability of the test results.
 
 <img src="assets/vessel.gif"/>
 
