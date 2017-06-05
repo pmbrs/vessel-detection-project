@@ -10,7 +10,7 @@ function main
     baseBkg = 0; % Initial Frame: 0 %
     baseNum = 0;
     
-    nTotalFrames = 4800; % Total: 1536
+    nTotalFrames = 1536; % Total: 1536
     
     thr = 30;
     minArea = 10;
@@ -18,7 +18,7 @@ function main
     alfa = 0.10;
     
     nFrameBkg = 1000;
-    step = 10;
+    step = 1;
     Bkg = zeros(size(imgBkg));
     
     mainFigure = figure(1);
@@ -67,13 +67,20 @@ function main
         sprintf('ROI %d',i);
         hold off
         
+        imshow(imgfrNew); %% Caminho rectangulos amarelos - Background 
+        hold on
+        
         imgdif = (abs(double(imgBkgBase(:,:,1))-double(imgfrNew(:,:,1)))>thr) | ...
-        (abs(double(imgBkgBase(:,:,2))-double(imgfrNew(:,:,2)))>thr) | ...
-        (abs(double(imgBkgBase(:,:,3))-double(imgfrNew(:,:,3)))>thr);
+            (abs(double(imgBkgBase(:,:,2))-double(imgfrNew(:,:,2)))>thr) | ...
+            (abs(double(imgBkgBase(:,:,3))-double(imgfrNew(:,:,3)))>thr);
     
     
         bw = imclose(imgdif,se);
         str = sprintf('Frame: %d',i); title(str);
+        
+        % ----------------------------------------------------------- %
+        %%%%%%%%imshow(bw);  %%Mete Background preto ao mesmo tempo
+        % ----------------------------------------------------------- %
         
         drawnow
         clf(mainFigure, 'reset');
