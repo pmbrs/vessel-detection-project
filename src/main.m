@@ -89,9 +89,9 @@ function main
     
 end
 
-% filename = fullfile(matlabroot,'examples','matlab','mydata.txt');
+% filename = fullfile(matlabroot,'examples','matlab','mydataVesselsC.txt');
 % fileID = fopen(filename);
-% C = textscan(fileID,'%u %u %u %u %u %u %u','Delimiter','\n');
+% C = textscan(fileID,'%u %u %u %u %u %u %u');
 % fclose(fileID);
 % whos C
 % celldisp(C)
