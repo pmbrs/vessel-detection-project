@@ -27,7 +27,7 @@ These are the default versions that exist on an upgraded Ubuntu LTS.
 How to run Script?
 Change only to the owner of the Ubuntu system, on file script.
 
-e.g.:
+**e.g.:**
 ```
 /home/asus/
 ```
