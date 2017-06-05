@@ -12,6 +12,42 @@ There has been growing interest in the topic of maritime surveillance, specially
 
 3. Enjoy!
 
+## Install Script Opencv
+
+Running on Linux (specifications):
+The versions installed (and therefore guaranteed to work) are:
+
+- opencv 2.4.13.2
+- cmake 3.5.1
+- Ubuntu 16.04.2
+
+
+These are the default versions that exist on an upgraded Ubuntu LTS.
+
+How to run Script?
+Change only to the owner of the Ubuntu system, on file script.
+
+e.g.:
+```
+/home/asus/
+```
+Change to:
+
+```
+/home/XXXXX/
+```
+Then, just run the script in the terminal.
+```
+./opencv_ourWay.sh
+```
+If you have problems compiling.
+
+Adding to the code the following include.
+
+Possible solution:
+```
+#include "opencv/cv.hpp"
+```
 
 ## Labeling Tool
 
