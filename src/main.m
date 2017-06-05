@@ -4,7 +4,7 @@ function main
     clear
     clc
     close all
-   
+    
     imgBkg = imread('../Frames/frame0000.jpg');
     
     baseBkg = 0; % Initial Frame: 0 %
@@ -12,13 +12,13 @@ function main
     
     nTotalFrames = 1536; % Total: 1536
     
-    thr = 30;
-    minArea = 10;
-    maxArea = 50;
-    alfa = 0.10;
+    thr = 10;%30
+    minArea = 10;%10
+    maxArea = 40;%50
+    alfa = 0.10;%0.10
     
     nFrameBkg = 1000;
-    step = 1;
+    step = 15;
     Bkg = zeros(size(imgBkg));
     
     mainFigure = figure(1);
@@ -52,7 +52,7 @@ function main
     % Remove object intersection
     % Faz as caixinhas
 
-    stepRoi = 15;
+    stepRoi = 10;
     nFrameROI = nTotalFrames;  % 23354 Frames used to compute background image
 
     for i = baseNum : stepRoi : nFrameROI
@@ -67,7 +67,7 @@ function main
         sprintf('ROI %d',i);
         hold off
         
-        imshow(imgfrNew); %% Caminho rectangulos amarelos - Background 
+        %imshow(imgfrNew); %% Caminho rectangulos amarelos - Background 
         hold on
         
         imgdif = (abs(double(imgBkgBase(:,:,1))-double(imgfrNew(:,:,1)))>thr) | ...
@@ -79,7 +79,7 @@ function main
         str = sprintf('Frame: %d',i); title(str);
         
         % ----------------------------------------------------------- %
-        %%%%%%%%imshow(bw);  %%Mete Background preto ao mesmo tempo
+        imshow(bw);  %%Mete Background preto ao mesmo tempo
         % ----------------------------------------------------------- %
         
         drawnow
@@ -88,3 +88,10 @@ function main
     end
     
 end
+
+% filename = fullfile(matlabroot,'examples','matlab','mydata.txt');
+% fileID = fopen(filename);
+% C = textscan(fileID,'%u %u %u %u %u %u %u','Delimiter','\n');
+% fclose(fileID);
+% whos C
+% celldisp(C)
