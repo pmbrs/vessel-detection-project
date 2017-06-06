@@ -28,7 +28,8 @@ maxArea = 1000; % 1000
 
 %nFrameBkg = 1000;   
 
-distanceBetweenVessels = 100;
+distanceBetweenVessels = 500;
+%1cm=58pixes(units)
 array_inds = [];
 
 mainFigure = figure(1);
@@ -45,15 +46,17 @@ se = strel('disk',3);
 % Remove object intersection
 % Faz as caixinhas
 
-for k = nInitialFrame : stepRoi : nTotalFrames  
+for f = nInitialFrame : stepRoi : nTotalFrames  
     imgfrNew = imread(sprintf('../Frames/frame%.4d.jpg', ...
-                    baseNum + k));
-    
+                    baseNum + f));
+    disp('-----------------------------------------------------------');
+    disp('f');
+    disp(f);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-    sprintf('ROI %d',k);
+    sprintf('ROI %d',f);
     hold off
 
     % imshow(imgfrNew); %% Real image with rectangles - Background 
@@ -65,7 +68,7 @@ for k = nInitialFrame : stepRoi : nTotalFrames
 
 
     bw = imclose(imgdif,se);
-    str = sprintf('Frame: %d',k);
+    str = sprintf('Frame: %d',f);
     title(str);
 
     % ----------------------------------------------------------- %
@@ -84,44 +87,76 @@ for k = nInitialFrame : stepRoi : nTotalFrames
     end
 
     regnum = length(inds);
-    
+    % ----------------------------------------------------------- %
+    disp('f/inds/regnum');
+    disp(f);
+    disp(inds);
+    disp(regnum);
+    % ----------------------------------------------------------- %
     if regnum
         % ----------------------------------------------------------- %
         %%%Spacial Validation
         % ----------------------------------------------------------- %
-%         for k=1:regnum
-%             for m=1:regnum
-%                %run all inds to search for inds that are too close
-%                vesselAX = regionProps(inds(k)).Centroid(1,1);
-%                vesselAY = regionProps(inds(k)).Centroid(1,2);
-%                vesselBX = regionProps(inds(m)).Centroid(1,1);
-%                vesselBY = regionProps(inds(m)).Centroid(1,2);
-%                
-%                distBetweenVessels = [vesselAX, vesselAY; ...
-%                    vesselBX, vesselBY];
-%                pdistBetweenVessels = pdist(distOfNeighborM, 'euclidean');
-%                
-%                if pdistBetweenVessels < distanceBetweenVessels
-%                   %remove inds k and m from inds
-%                   
-%                   %ind = [1 4 7] ; % indices to be removed
-%                   %A(ind) = []; % remove
-%                   
-%                   for n=1:size(inds)
-%                       if inds(n) == k_value;
-%                           
-%                           
-%                           array_inds = [array_inds inds(n)];
-%                       end
-%                   end
-%                   
-%                end
-%                
-%                
-%             end
-%         end
+        for k=1:regnum
+            for m=1:regnum
+               if k ~= m
+                   %run all inds to search for inds that are too close
+                   vesselAX = regionProps(inds(k)).Centroid(1,1);
+                   vesselAY = regionProps(inds(k)).Centroid(1,2);
+                   vesselBX = regionProps(inds(m)).Centroid(1,1);
+                   vesselBY = regionProps(inds(m)).Centroid(1,2);
+
+                   distBetweenVessels = [vesselAX, vesselAY; ...
+                       vesselBX, vesselBY];
+                   pdistBetweenVessels = pdist(distBetweenVessels, 'euclidean');
+                   disp('dist');
+                   disp(pdistBetweenVessels);
+
+                   if pdistBetweenVessels < distanceBetweenVessels
+                       disp('entrou');
+                       %remove inds k and m from inds
+                       
+                       %ind = [1 4 7] ; % indices to be removed
+                       %A(ind) = []; % remove
+                       
+                       %array_inds array to put vessels that are too close
+                       %to other vessels
+                       
+                       %detecting if k and m are in array_inds
+                       arrayDetection = ismember([k m],array_inds);
+                       
+                       %k is not find on array_inds
+                       if arrayDetection(1,1) == 0
+                           array_inds = [array_inds k];
+                       end
+                       
+                       %m is not find on array_inds
+                       if arrayDetection(1,2) == 0
+                           array_inds = [array_inds m];
+                       end
+                   end                   
+               end
+            end         
+        end
+        disp('regnumCalisto');
+        disp(regnum);
+        %all vessels processed
+        %allInds = inds;
+        allInds = unique(array_inds);
+%         withoutDuplicates = unique(array_inds);
+%         allInds(withoutDuplicates) = [];
+%         allInds = withoutDuplicates;
         
-        %%USE if spacial validation is not used
+        % ----------------------------------------------------------- %
+        disp('array_inds');
+        disp(array_inds);
+        disp('allInds');
+        disp(allInds);
+        % ----------------------------------------------------------- %
+        
+        %now allInds have only vessels aproved by spacial validation algoritm
+        
+        %%USE if spacial validation is not used, to check if is true
         %array_inds = inds;
         
         % ----------------------------------------------------------- %
@@ -131,20 +166,25 @@ for k = nInitialFrame : stepRoi : nTotalFrames
         %%frame 15 will be overwriten
         
         %doing boxes on approved inds
-        for j=1:regnum
-            [lin, col]= find(lb == inds(j));
-            upLPoint = min([lin col]);
-            dWindow  = max([lin col]) - upLPoint + 1;
+        regnumAllInds = length(allInds);
+    
+        if regnumAllInds
+            for j=1:regnumAllInds
+                [lin, col]= find(lb == allInds(j));
+                upLPoint = min([lin col]);
+                dWindow  = max([lin col]) - upLPoint + 1;
 
-            rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
-                'linewidth',2);
-            
-            %%%Temporal Buffer
-            %%add regionProps to j(index) of the buffer
-            
-            
-            
+                rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
+                    'linewidth',2);
+
+                %%%Temporal Buffer
+                %%add regionProps to j(index) of the buffer
+
+
+
+            end
         end
+
     end
 
     drawnow
