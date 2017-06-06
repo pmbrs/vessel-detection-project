@@ -3,109 +3,101 @@
 % function main
  clear all, close all
  
-    %importing labels from txt
-    load vesselLabels.txt;
-    
-    baseBkg = 13; % Initial Frame: 0 %
-    baseNum = 13;
-    
-    % To use txt values use nFrames - 1 %
-    nTotalFrames = 1534; % Total: 1535
-    nInitialFrame = 13;  % Initial Boat: 13
-    
-    thr = 10; % 30
-    thr_global = 180;
-    thr_diff = 18;
-    
-    minArea = 100;  % 100
-    maxArea = 1000; % 1000
-    alfa = 0.10;    % 0.10
-    
-    nFrameBkg = 1000;   
-    
-    mainFigure = figure(1);
-    
-    numKeyFrames = 0;
-    
-    se = strel('disk',3);
-    
-    % ------------------ END Backgroud ------------------ %
+%importing labels from txt
+load vesselLabels.txt;
 
-    % --------------------------------------------------- %
+baseBkg = 13; % Initial Frame: 0 %
+baseNum = 13;
 
-    %imgBkgBase = imgUInt8; % Imagem de background
+% To use txt values use nFrames - 1 %
+nTotalFrames = 1534; % Total: 1535
+nInitialFrame = 13;  % Initial Boat: 13
 
-    % -------------------- ROI -------------------------- %
-    % Remove object intersection
-    % Faz as caixinhas
+thr = 10; % 30
+thr_global = 180;
+thr_diff = 18;
 
-    stepRoi = 50;
-    nFrameROI = nTotalFrames;  % 23354 Frames used to compute background image
+minArea = 100;  % 100
+maxArea = 1000; % 1000
+alfa = 0.10;    % 0.10
 
-    for k = nInitialFrame : stepRoi : nTotalFrames  
-        imgfrNew = imread(sprintf('../Frames/frame%.4d.jpg', ...
-                        baseNum + k));
+nFrameBkg = 1000;   
 
-                    
-        if k == 48
-            disp('')
-        end
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-        %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+mainFigure = figure(1);
 
-        sprintf('ROI %d',k);
-        hold off
-        
-        %imshow(imgfrNew); %% Caminho rectangulos amarelos - Background 
-        hold on
-        
-        imgdif = (abs(double(imgfrNew(:,:,1)))>thr_global) | ...
-            (abs(double(imgfrNew(:,:,2))-double(imgfrNew(:,:,1)))>thr_diff) | ...
-            (abs(double(imgfrNew(:,:,3))-double(imgfrNew(:,:,1)))>thr_diff);
-    
-    
-        bw = imclose(imgdif,se);
-        str = sprintf('Frame: %d',k); title(str);
-        
-        % ----------------------------------------------------------- %
-        imshow(bw);  %%Mete Background preto ao mesmo tempo
-        % ----------------------------------------------------------- %
-        
-        %imshow(bw)
-        [lb num]=bwlabel(bw);
-        regionProps = regionprops(lb,'area','FilledImage','Centroid');
-        
-        %inds = find(minArea < [regionProps.Area] < maxArea);
-        inds = [];
-        for k = 1 : length(regionProps)
-            if find([regionProps(k).Area] < maxArea & [regionProps(k).Area] > minArea)
-                inds = [ inds k ];
-            end
-        end
+numKeyFrames = 0;
 
-        regnum = length(inds);
+se = strel('disk',3);
 
-        if regnum
-            for j=1:regnum
-                [lin, col]= find(lb == inds(j));
-                upLPoint = min([lin col]);
-                dWindow  = max([lin col]) - upLPoint + 1;
+% ------------------ END Backgroud ------------------ %
 
-                rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
-                    'linewidth',2);
-            end
-        end
-        
-        drawnow
-        %clf(mainFigure, 'reset');
-        
+% --------------------------------------------------- %
+
+%imgBkgBase = imgUInt8; % Imagem de background
+
+% -------------------- ROI -------------------------- %
+% Remove object intersection
+% Faz as caixinhas
+
+stepRoi = 50;
+nFrameROI = nTotalFrames;  % 23354 Frames used to compute background image
+
+for k = nInitialFrame : stepRoi : nTotalFrames  
+    imgfrNew = imread(sprintf('../Frames/frame%.4d.jpg', ...
+                    baseNum + k));
+
+
+    if k == 48
+        disp('')
     end
-    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% filename = fullfile(matlabroot,'examples','matlab','mydataVesselsC.txt');
-% fileID = fopen(filename);
-% C = textscan(fileID,'%u %u %u %u %u %u %u');
-% fclose(fileID);
-% whos C
-% celldisp(C)
+    sprintf('ROI %d',k);
+    hold off
+
+    %imshow(imgfrNew); %% Caminho rectangulos amarelos - Background 
+    hold on
+
+    imgdif = (abs(double(imgfrNew(:,:,1)))>thr_global) | ...
+        (abs(double(imgfrNew(:,:,2))-double(imgfrNew(:,:,1)))>thr_diff) | ...
+        (abs(double(imgfrNew(:,:,3))-double(imgfrNew(:,:,1)))>thr_diff);
+
+
+    bw = imclose(imgdif,se);
+    str = sprintf('Frame: %d',k); title(str);
+
+    % ----------------------------------------------------------- %
+    imshow(bw);  %%Mete Background preto ao mesmo tempo
+    % ----------------------------------------------------------- %
+
+    %imshow(bw)
+    [lb num]=bwlabel(bw);
+    regionProps = regionprops(lb,'area','FilledImage','Centroid');
+
+    %inds = find(minArea < [regionProps.Area] < maxArea);
+    inds = [];
+    for k = 1 : length(regionProps)
+        if find([regionProps(k).Area] < maxArea & [regionProps(k).Area] > minArea)
+            inds = [ inds k ];
+        end
+    end
+
+    regnum = length(inds);
+
+    if regnum
+        for j=1:regnum
+            [lin, col]= find(lb == inds(j));
+            upLPoint = min([lin col]);
+            dWindow  = max([lin col]) - upLPoint + 1;
+
+            rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
+                'linewidth',2);
+        end
+    end
+
+    drawnow
+    %clf(mainFigure, 'reset');
+
+end
