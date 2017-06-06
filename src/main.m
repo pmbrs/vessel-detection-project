@@ -31,6 +31,7 @@ maxArea = 1000; % 1000
 distanceBetweenVessels = 80;
 %1cm=58pixes(units)
 
+bufferArr = [];
 
 mainFigure = figure(1);
 
@@ -74,7 +75,11 @@ for f = nInitialFrame : stepRoi : nTotalFrames
     title(str);
 
     % ----------------------------------------------------------- %
-    imshow(bw);  %%Mete Background preto ao mesmo tempo
+    %imshow(bw);  %%Mete Background preto ao mesmo tempo
+    % ----------------------------------------------------------- %
+    
+    % ----------------------------------------------------------- %
+    imshow(imgfrNew);  %%
     % ----------------------------------------------------------- %
 
     [lb num]=bwlabel(bw);
@@ -165,7 +170,7 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         disp(allInds);
         % ----------------------------------------------------------- %
         
-        %now allInds have only vessels aproved by spacial validation algoritm
+        % NOW allInds have only vessels aproved by spacial validation algoritm
         
         %%USE if spacial validation is not used, to check if is true
         %array_inds = inds;
@@ -173,9 +178,30 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         % ----------------------------------------------------------- %
         %%%Temporal Buffer
         % ----------------------------------------------------------- %
-        %%change buffer lines from 1-14 to 2-15
-        %%frame 15 will be overwriten
+        %%change buffer lines from 1-6 to 2-7
+        %%frame 7 will be overwriten
         
+        numSim = 10;
+        your_cell = cell(numSim,1);
+        %Generating data and storing it in a cell array
+        for ii = 1:numSim
+            % insert line col on first and second rows(columns?)
+            temp_mat = randi(100,randi(10,1,2));
+            your_cell{ii} = temp_mat;
+        end
+        %Getting all data in a vector
+        your_result = cell2mat(cellfun(@(x)   x(:),your_cell,'uniformoutput',false));
+        
+        bufferArr(end) = [];        
+        %
+        
+        if regnumAllInds
+            arrLineCol = [];
+            for j = 1 : regnumAllInds
+                arrLineCol = [arrLineCol [lin col]];
+            end
+            bufferArr(1) = arrLineCol;
+        end
         
         % ----------------------------------------------------------- %
         %doing boxes on approved inds
@@ -184,7 +210,7 @@ for f = nInitialFrame : stepRoi : nTotalFrames
     
         if regnumAllInds
             for j=1:regnumAllInds
-                [lin, col]= find(lb == allInds(j));
+                [lin, col] = find(lb == allInds(j));
                 upLPoint = min([lin col]);
                 dWindow  = max([lin col]) - upLPoint + 1;
 
@@ -204,3 +230,5 @@ for f = nInitialFrame : stepRoi : nTotalFrames
     drawnow
 
 end
+
+
