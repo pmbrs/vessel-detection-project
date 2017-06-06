@@ -9,7 +9,9 @@
     baseBkg = 13; % Initial Frame: 0 %
     baseNum = 13;
     
-    nTotalFrames = 1536; % Total: 1536
+    % To use txt values use nFrames - 1 %
+    nTotalFrames = 1534; % Total: 1535
+    nInitialFrame = 13;  % Initial Boat: 13
     
     thr = 10; % 30
     thr_global = 180;
@@ -19,9 +21,7 @@
     maxArea = 1000; % 1000
     alfa = 0.10;    % 0.10
     
-    nFrameBkg = 1000;
-    step = 1;
-   
+    nFrameBkg = 1000;   
     
     mainFigure = figure(1);
     
@@ -39,11 +39,10 @@
     % Remove object intersection
     % Faz as caixinhas
 
-    stepRoi = 10;
+    stepRoi = 50;
     nFrameROI = nTotalFrames;  % 23354 Frames used to compute background image
 
-    %for k = baseNum : stepRoi : nFrameROI
-    for k = 1 : 100  
+    for k = nInitialFrame : stepRoi : nTotalFrames  
         imgfrNew = imread(sprintf('../Frames/frame%.4d.jpg', ...
                         baseNum + k));
 
