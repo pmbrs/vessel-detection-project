@@ -3,7 +3,8 @@
 %function main
  clear all, close all
  
- 
+    %importing labels from txt
+    load vesselLabels.txt;
  
     
     baseBkg = 13; % Initial Frame: 0 %
