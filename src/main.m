@@ -1,24 +1,23 @@
 %% STARTING
 
-%function main
+% function main
  clear all, close all
  
     %importing labels from txt
     load vesselLabels.txt;
- 
     
     baseBkg = 13; % Initial Frame: 0 %
     baseNum = 13;
     
     nTotalFrames = 1536; % Total: 1536
     
-    thr = 10;%30
+    thr = 10; % 30
     thr_global = 180;
     thr_diff = 18;
     
-    minArea = 100;%10
-    maxArea = 1000;%50
-    alfa = 0.10;%0.10
+    minArea = 100;  % 100
+    maxArea = 1000; % 1000
+    alfa = 0.10;    % 0.10
     
     nFrameBkg = 1000;
     step = 1;
