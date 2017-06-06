@@ -7,11 +7,11 @@
 load vesselLabels.txt;
 %vesselsLabels(100,2);
 
-% ------------------- START Const ------------------- %
+% -------------------- CONST ---------------------- %
+RegionBuffer = [];
+stepRoi = 25;
 
-stepRoi = 1;
-
-baseBkg = 13; % Initial Frame: 0 %
+%baseBkg = 13; % Initial Frame: 0 %
 baseNum = 13;
 
 % To use txt values use nVesselLabels = nFrames + 1 %
@@ -20,17 +20,17 @@ nTotalFrames = 1533; % Total: 1533
 nInitialFrame = 12;  % Initial Boat: 12
 
 thr_global = 180; % 180
-thr_diff = 18;    % 18
+thr_diff = 60;    % 18
 
 minArea = 100;  % 100
 maxArea = 1000; % 1000
-alfa = 0.10;    % 0.10
+%alfa = 0.10;    % 0.10
 
-nFrameBkg = 1000;   
+%nFrameBkg = 1000;   
 
 mainFigure = figure(1);
 
-numKeyFrames = 0;
+%numKeyFrames = 0;
 
 se = strel('disk',3);
 
