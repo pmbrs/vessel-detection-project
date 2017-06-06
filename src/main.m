@@ -28,9 +28,9 @@ maxArea = 1000; % 1000
 
 %nFrameBkg = 1000;   
 
-distanceBetweenVessels = 500;
+distanceBetweenVessels = 80;
 %1cm=58pixes(units)
-array_inds = [];
+
 
 mainFigure = figure(1);
 
@@ -46,7 +46,9 @@ se = strel('disk',3);
 % Remove object intersection
 % Faz as caixinhas
 
-for f = nInitialFrame : stepRoi : nTotalFrames  
+for f = nInitialFrame : stepRoi : nTotalFrames 
+    array_inds = [];
+    
     imgfrNew = imread(sprintf('../Frames/frame%.4d.jpg', ...
                     baseNum + f));
     disp('-----------------------------------------------------------');
@@ -97,6 +99,8 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         % ----------------------------------------------------------- %
         %%%Spacial Validation
         % ----------------------------------------------------------- %
+
+            
         for k=1:regnum
             for m=1:regnum
                if k ~= m
@@ -109,11 +113,11 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                    distBetweenVessels = [vesselAX, vesselAY; ...
                        vesselBX, vesselBY];
                    pdistBetweenVessels = pdist(distBetweenVessels, 'euclidean');
-                   disp('dist');
-                   disp(pdistBetweenVessels);
+%                    disp('dist');
+%                    disp(pdistBetweenVessels);
 
                    if pdistBetweenVessels < distanceBetweenVessels
-                       disp('entrou');
+                       %disp('entrou');
                        %remove inds k and m from inds
                        
                        %ind = [1 4 7] ; % indices to be removed
@@ -124,7 +128,9 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                        
                        %detecting if k and m are in array_inds
                        arrayDetection = ismember([k m],array_inds);
-                       
+                       if f == 82
+                        f=f;    
+                       end
                        %k is not find on array_inds
                        if arrayDetection(1,1) == 0
                            array_inds = [array_inds k];
@@ -141,16 +147,21 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         disp('regnumCalisto');
         disp(regnum);
         %all vessels processed
-        %allInds = inds;
-        allInds = unique(array_inds);
-%         withoutDuplicates = unique(array_inds);
-%         allInds(withoutDuplicates) = [];
-%         allInds = withoutDuplicates;
-        
-        % ----------------------------------------------------------- %
+        allInds = inds;
+         % ----------------------------------------------------------- %
         disp('array_inds');
         disp(array_inds);
         disp('allInds');
+        disp(allInds);
+        % ----------------------------------------------------------- %
+%         allInds = unique(array_inds);
+%         withoutDuplicates = unique(array_inds);
+        allInds(array_inds) = [];
+%         allInds = withoutDuplicates;
+        
+        % ----------------------------------------------------------- %
+        
+        disp('POSallInds');
         disp(allInds);
         % ----------------------------------------------------------- %
         
@@ -165,7 +176,10 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         %%change buffer lines from 1-14 to 2-15
         %%frame 15 will be overwriten
         
+        
+        % ----------------------------------------------------------- %
         %doing boxes on approved inds
+        % ----------------------------------------------------------- %
         regnumAllInds = length(allInds);
     
         if regnumAllInds
