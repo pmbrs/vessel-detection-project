@@ -9,7 +9,7 @@ load vesselLabels.txt;
 
 % ------------------- START Const ------------------- %
 
-stepRoi = 50;
+stepRoi = 1;
 
 baseBkg = 13; % Initial Frame: 0 %
 baseNum = 13;
@@ -19,9 +19,8 @@ baseNum = 13;
 nTotalFrames = 1533; % Total: 1533
 nInitialFrame = 12;  % Initial Boat: 12
 
-thr = 10; % 30
-thr_global = 180;
-thr_diff = 18;
+thr_global = 180; % 180
+thr_diff = 18;    % 18
 
 minArea = 100;  % 100
 maxArea = 1000; % 1000
@@ -54,7 +53,7 @@ for k = nInitialFrame : stepRoi : nTotalFrames
     sprintf('ROI %d',k);
     hold off
 
-    %imshow(imgfrNew); %% Caminho rectangulos amarelos - Background 
+    % imshow(imgfrNew); %% Real image with rectangles - Background 
     hold on
 
     imgdif = (abs(double(imgfrNew(:,:,1)))>thr_global) | ...
@@ -63,13 +62,13 @@ for k = nInitialFrame : stepRoi : nTotalFrames
 
 
     bw = imclose(imgdif,se);
-    str = sprintf('Frame: %d',k); title(str);
+    str = sprintf('Frame: %d',k);
+    title(str);
 
     % ----------------------------------------------------------- %
     imshow(bw);  %%Mete Background preto ao mesmo tempo
     % ----------------------------------------------------------- %
 
-    %imshow(bw)
     [lb num]=bwlabel(bw);
     regionProps = regionprops(lb,'area','FilledImage','Centroid');
 
@@ -77,7 +76,7 @@ for k = nInitialFrame : stepRoi : nTotalFrames
     inds = [];
     for k = 1 : length(regionProps)
         if find([regionProps(k).Area] < maxArea & [regionProps(k).Area] > minArea)
-            inds = [ inds k ];
+            inds = [inds k];
         end
     end
 
@@ -97,3 +96,18 @@ for k = nInitialFrame : stepRoi : nTotalFrames
     drawnow
 
 end
+
+% function [mask_v, targets] = Vessel_detection(l, SR, R_threshold, dif_threshold)
+% 
+% % l         input image
+% % mask_v    binary mask
+% % features  array of regions features
+% 
+% % vessel detection
+% % mask = (max(I, [], 3) > R_threshold) = ([max](I, [], 3) - min(1, [], 3));
+% 
+% SE = strel('disk', SR);
+% mask_v = imdilate(imgdif, SE);
+% targets = extract_targets(mask_v); % extract blob features
+%     
+% end
