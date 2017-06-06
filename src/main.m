@@ -5,13 +5,19 @@
  
 %importing labels from txt
 load vesselLabels.txt;
+%vesselsLabels(100,2);
+
+% ------------------- START Const ------------------- %
+
+stepRoi = 50;
 
 baseBkg = 13; % Initial Frame: 0 %
 baseNum = 13;
 
-% To use txt values use nFrames - 1 %
-nTotalFrames = 1534; % Total: 1535
-nInitialFrame = 13;  % Initial Boat: 13
+% To use txt values use nVesselLabels = nFrames + 1 %
+% nVesselLabels start in 1 and nFrames starts in 0  %
+nTotalFrames = 1533; % Total: 1533
+nInitialFrame = 12;  % Initial Boat: 12
 
 thr = 10; % 30
 thr_global = 180;
@@ -29,27 +35,18 @@ numKeyFrames = 0;
 
 se = strel('disk',3);
 
-% ------------------ END Backgroud ------------------ %
+% -------------------- END Const -------------------- %
 
 % --------------------------------------------------- %
-
-%imgBkgBase = imgUInt8; % Imagem de background
 
 % -------------------- ROI -------------------------- %
 % Remove object intersection
 % Faz as caixinhas
 
-stepRoi = 50;
-nFrameROI = nTotalFrames;  % 23354 Frames used to compute background image
-
 for k = nInitialFrame : stepRoi : nTotalFrames  
     imgfrNew = imread(sprintf('../Frames/frame%.4d.jpg', ...
                     baseNum + k));
-
-
-    if k == 48
-        disp('')
-    end
+    
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -98,6 +95,5 @@ for k = nInitialFrame : stepRoi : nTotalFrames
     end
 
     drawnow
-    %clf(mainFigure, 'reset');
 
 end
