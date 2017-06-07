@@ -65,7 +65,8 @@ se = strel('disk',3);
 % reglist(j).userData = {'', 0};
 
 maxBufferNum = 7;
-numFrameIterations = 0;
+
+numFrameIterations = 0; 
 numFrameIterationsAux = 0;
 
 bufferStructNames = ['a'; ...
@@ -93,7 +94,7 @@ bufferStruct = struct('a', {}, ...
 
 for f = nInitialFrame : stepRoi : nTotalFrames 
     array_inds = [];
-    numFrameIterations = numFrameIterations + 1; 
+     
     
     imgfrNew = imread(sprintf('../Frames/frame%.4d.jpg', ...
                     baseNum + f));
@@ -108,16 +109,31 @@ for f = nInitialFrame : stepRoi : nTotalFrames
     % Buffer Shift Lines
     % ------------------------------------------------------ %
     
-    % Limit the bigger number
-    if maxBufferNum < numFrameIterations
+    % if the buffer is not full, use only the length of the buffer
+    if numFrameIterations < 8
         numFrameIterationsAux = maxBufferNum;
+        
+        
     else
         numFrameIterationsAux = numFrameIterations;
+        
+        bufferStruct(1).g = bufferStruct(1).f;
+        bufferStruct(1).f = bufferStruct(1).e;
+        bufferStruct(1).e = bufferStruct(1).d;
+        bufferStruct(1).d = bufferStruct(1).c;
+        bufferStruct(1).c = bufferStruct(1).b;
+        bufferStruct(1).b = bufferStruct(1).a;
+        
+        
+        
     end
     
-    for mb = numFrameIterationsAux : -1 : 2
-        bufferStruct.bufferStructNames(mb);
-    end
+    
+    %for mb = numFrameIterationsAux : -1 : 2
+    %
+    %bufferStruct(1).a = 1;
+    %s(1).b=3
+    %end
     
     % ------------------------------------------------------ %
     % END Buffer Shift Lines
@@ -159,10 +175,10 @@ for f = nInitialFrame : stepRoi : nTotalFrames
 
     regnum = length(inds);
     % ----------------------------------------------------------- %
-    disp('f/inds/regnum');
-    disp(f);
-    disp(inds);
-    disp(regnum);
+%     disp('f/inds/regnum');
+%     disp(f);
+%     disp(inds);
+%     disp(regnum);
     % ----------------------------------------------------------- %
     if regnum
         
@@ -216,18 +232,18 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         end
         
         % ------------------------------------------------------ %
-        % END Temporal Validation Algorithm
+        % END Spatial Validation Algorithm
         % ------------------------------------------------------ %
         
-        disp('regnumCalisto');
-        disp(regnum);
+%         disp('regnumCalisto');
+%         disp(regnum);
         %all vessels processed
         allInds = inds;
          % ----------------------------------------------------------- %
-        disp('array_inds');
-        disp(array_inds);
-        disp('allInds');
-        disp(allInds);
+%         disp('array_inds');
+%         disp(array_inds);
+%         disp('allInds');
+%         disp(allInds);
         % ----------------------------------------------------------- %
 %         allInds = unique(array_inds);
 %         withoutDuplicates = unique(array_inds);
@@ -236,8 +252,8 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         
         % ----------------------------------------------------------- %
         
-        disp('POSallInds');
-        disp(allInds);
+%         disp('POSallInds');
+%         disp(allInds);
         % ----------------------------------------------------------- %
         
         % NOW allInds have only vessels aproved by spacial validation algoritm
@@ -321,16 +337,49 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                 arrAllIndsRectangleAux = [arrAllIndsRectangleAux; rectangleAux];
                 %%%Temporal Buffer
                 %%add regionProps to j(index) of the buffer
-
+                
             end
             % add the arrAllIndsRectangleAux to buffer first line
-            field = 'a';
+            %field = 'a';
             %bufferStruct = setfield(bufferStruct, field, arrAllIndsRectangleAux);
             %bufferStruct(1).bufferStructNames(1);
-            disp('My Buffer Struct: ');
-            disp(bufferStruct);
-            
-        end
+            if numFrameIterations < 7
+                numFrameIterationsAux = maxBufferNum;
+                
+     
+                %%%%%%%%%%%%To REcode
+                if numFrameIterations == 1
+                    bufferStruct(1).g = arrAllIndsRectangleAux;
+                end
+                if numFrameIterations == 2
+                    bufferStruct(1).f = arrAllIndsRectangleAux;
+                end
+                if numFrameIterations == 3
+                    bufferStruct(1).e = arrAllIndsRectangleAux;
+                end
+                if numFrameIterations == 4
+                    bufferStruct(1).d = arrAllIndsRectangleAux;
+                end
+                if numFrameIterations == 5
+                    bufferStruct(1).c = arrAllIndsRectangleAux;
+                end
+                if numFrameIterations == 6
+                    bufferStruct(1).b = arrAllIndsRectangleAux;
+                end
+                %%%%%%%%%%%%EndTo REcode
+            else
+                
+                bufferStruct(1).a = arrAllIndsRectangleAux;
+                
+                disp('My Buffer Struct: ');
+                disp(bufferStruct(1));
+            end
+%             disp('My Buffer Struct: ');
+%             disp(bufferStruct(1).g);
+            %BufferStruct is incremented because buffer will be incremented
+            numFrameIterations = numFrameIterations + 1;
+        end    
+        
         
         % ------------------------------------------------------ %
         % END Temporal Validation Algorithm
