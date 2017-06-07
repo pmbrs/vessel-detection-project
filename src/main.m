@@ -390,8 +390,12 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         % ----------------------------------------------------------- %
         
         %regnumAllInds = length(allInds); % change variables
+        
+        %number of yellow boxes to print
+        regnumbufferStruct = length(bufferStruct(1).a);
     
         if regnumAllInds % change variables
+        %if regnumAllInds % change variables
             structBufferLine = [];
             for j=1:regnumAllInds % change variables
 %                 [lin, col] = find(lb == allInds(j));
