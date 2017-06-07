@@ -68,7 +68,6 @@ maxBufferNum = 7;
 
 numFrameIterations = 0; 
 numFrameIterationsAux = 0;
-bufferCount = 0;
 
 bufferStructNames = ['a'; ...
                      'b'; ...
@@ -203,12 +202,7 @@ for f = nInitialFrame : stepRoi : nTotalFrames
 %                    disp('dist');
 %                    disp(pdistBetweenVessels);
 
-                    isFirstLayer = false;
-
                    if pdistBetweenVessels < distanceBetweenVessels
-                       
-                       isFirstLayer = true;
-                       
                        %disp('entrou');
                        %remove inds k and m from inds
                        
@@ -217,13 +211,6 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                        
                        %array_inds array to put vessels that are too close
                        %to other vessels
-                       
-                       if a == true
-                           bufferCount = bufferCount + 1;
-                       end
-                       
-                       rectangle('Position',distBetweenVessels,'EdgeColor',[1 1 0],...
-                                 'linewidth',2);
                        
                        %detecting if k and m are in array_inds
                        arrayDetection = ismember([k m],array_inds);
