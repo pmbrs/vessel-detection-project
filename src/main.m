@@ -405,30 +405,37 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         %regnumAllInds = length(allInds); % change variables
         
         %number of yellow boxes to print
-        regnumbufferStruct = length(bufferStruct(1).a);
-    
-        if regnumAllInds % change variables
-        %if regnumAllInds % change variables
-            structBufferLine = [];
-            for j=1:regnumAllInds % change variables
-%                 [lin, col] = find(lb == allInds(j));
-%                 upLPoint = min([lin col]);
-%                 dWindow  = max([lin col]) - upLPoint + 1;
-                structBufferLine = []; %% First buffer line TOFIX
-                
-%                 rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
-%                     'linewidth',2);
-%                 rectangle('Position',structBufferLine,'EdgeColor',[1 1 0],...
-%                     'linewidth',2);
+        if numFrameIterations > 7
+            [m,n] = size(bufferStruct(1).a);
+            regnumbufferStruct = m;
+            
+            %%%if bufferStruct(1).a is a matrix
+            if regnumbufferStruct > 1
+            %if regnumAllInds % change variables
+                %structBufferLine = [];
+                for j=1: 1: regnumbufferStruct % change variables
+    %                 [lin, col] = find(lb == allInds(j));
+    %                 upLPoint = min([lin col]);
+    %                 dWindow  = max([lin col]) - upLPoint + 1;
+                    %structBufferLine = []; %% First buffer line TOFIX
+                    
+    %                 rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
+    %                     'linewidth',2);
+                    rectangle('Position',bufferStruct(1).a(j,:),'EdgeColor',[1 1 0],...
+                        'linewidth',2);
 
-                %%%Temporal Buffer
-                %%add regionProps to j(index) of the buffer
-
-
-
+                    %%%Temporal Buffer
+                    %%add regionProps to j(index) of the buffer
+                end
+            
+            else
+                %%%if bufferStruct(1).a is an array
+                if regnumbufferStruct == 1
+                    rectangle('Position',bufferStruct(1).a,'EdgeColor',[1 1 0],...
+                        'linewidth',2); 
+                end
+                reglist = struct([]);
             end
-        else
-            reglist = struct([]);
         end
     end
 
