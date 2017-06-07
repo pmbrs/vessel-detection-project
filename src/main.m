@@ -1,8 +1,8 @@
 %% STARTING
 
-% function main
- clear all, close all
- 
+function main
+clear all, close all
+
 %importing labels from txt
 load vesselLabels.txt;
 %vesselsLabels(100,2);
@@ -26,7 +26,7 @@ minArea = 100;  % 100
 maxArea = 1000; % 1000
 %alfa = 0.10;    % 0.10
 
-%nFrameBkg = 1000;   
+%nFrameBkg = 1000;
 
 distanceBetweenVessels = 80;
 %1cm=58pixes(units)
@@ -35,12 +35,13 @@ bufferArr = [];
 reglist = [];
 rectangleAux = [];
 arrAllIndsRectangleAux = [];
-
+indsTemp = [];
 mainFigure = figure(1);
 
 %numKeyFrames = 0;
 
 se = strel('disk',3);
+
 
 % ---------------------- END Const ---------------------- %
 
@@ -55,35 +56,35 @@ se = strel('disk',3);
 % ------------------------------------------------------- %
 
 % mask = zeros(dWindow);
-% 
+%
 % coords = [lin col] - ones(size(lin, 1), 1) * upLPoint + ones(length(lin), 2);
 % ind = dWindow(1) * (coords(:,2) - 1) + coords(:,1);
 % mask(ind) = ones(1, length(ind));
-% 
+%
 % reglist(j) = struct('position', rectangleAux, ...
 %     'ulPoint', upLPoint, 'boxDim', dWindow, 'userData', []);
 % reglist(j).userData = {'', 0};
 
 maxBufferNum = 7;
 
-numFrameIterations = 0; 
+numFrameIterations = 0;
 numFrameIterationsAux = 0;
 
 bufferStructNames = ['a'; ...
-                     'b'; ...
-                     'c'; ...
-                     'd'; ...
-                     'e'; ...
-                     'f'; ...
-                     'g'];
+    'b'; ...
+    'c'; ...
+    'd'; ...
+    'e'; ...
+    'f'; ...
+    'g'];
 
 bufferStruct = struct('a', {}, ...
-                      'b', {}, ...
-                      'c', {}, ...
-                      'd', {}, ...
-                      'e', {}, ...
-                      'f', {}, ...
-                      'g', {});
+    'b', {}, ...
+    'c', {}, ...
+    'd', {}, ...
+    'e', {}, ...
+    'f', {}, ...
+    'g', {});
 
 %disp('Testing Buffer: ');
 %disp(bufferStruct);
@@ -92,12 +93,12 @@ bufferStruct = struct('a', {}, ...
 % ------------------- END BUFFER ------------------------ %
 % ------------------------------------------------------- %
 
-for f = nInitialFrame : stepRoi : nTotalFrames 
+for f = nInitialFrame : stepRoi : nTotalFrames
     array_inds = [];
-     
+    
     
     imgfrNew = imread(sprintf('../Frames/frame%.4d.jpg', ...
-                    baseNum + f));
+        baseNum + f));
     disp('-----------------------------------------------------------');
     disp('f');
     disp(f);
@@ -138,22 +139,22 @@ for f = nInitialFrame : stepRoi : nTotalFrames
     % ------------------------------------------------------ %
     % END Buffer Shift Lines
     % ------------------------------------------------------ %
-
+    
     sprintf('ROI %d',f);
     hold off
-
-    % imshow(imgfrNew); %% Real image with rectangles - Background 
+    
+    % imshow(imgfrNew); %% Real image with rectangles - Background
     hold on
-
+    
     imgdif = (abs(double(imgfrNew(:,:,1)))>thr_global) | ...
         (abs(double(imgfrNew(:,:,2))-double(imgfrNew(:,:,1)))>thr_diff) | ...
         (abs(double(imgfrNew(:,:,3))-double(imgfrNew(:,:,1)))>thr_diff);
-
-
+    
+    
     bw = imclose(imgdif,se);
     str = sprintf('Frame: %d',f);
     title(str);
-
+    
     % ----------------------------------------------------------- %
     %imshow(bw);  %%Mete Background preto ao mesmo tempo
     % ----------------------------------------------------------- %
@@ -161,10 +162,10 @@ for f = nInitialFrame : stepRoi : nTotalFrames
     % ----------------------------------------------------------- %
     imshow(imgfrNew);  %%
     % ----------------------------------------------------------- %
-
+    
     [lb num]=bwlabel(bw);
     regionProps = regionprops(lb,'area','FilledImage','Centroid');
-
+    
     %inds = find(minArea < [regionProps.Area] < maxArea);
     inds = [];
     for k = 1 : length(regionProps)
@@ -172,88 +173,88 @@ for f = nInitialFrame : stepRoi : nTotalFrames
             inds = [inds k];
         end
     end
-
+    
     regnum = length(inds);
     % ----------------------------------------------------------- %
-%     disp('f/inds/regnum');
-%     disp(f);
-%     disp(inds);
-%     disp(regnum);
+    %     disp('f/inds/regnum');
+    %     disp(f);
+    %     disp(inds);
+    %     disp(regnum);
     % ----------------------------------------------------------- %
     if regnum
         
         % ------------------------------------------------------ %
         % Spatial Validation Algorithm
         % ------------------------------------------------------ %
-
-            
+        
+        
         for k=1:regnum
             for m=1:regnum
-               if k ~= m
-                   %run all inds to search for inds that are too close
-                   vesselAX = regionProps(inds(k)).Centroid(1,1);
-                   vesselAY = regionProps(inds(k)).Centroid(1,2);
-                   vesselBX = regionProps(inds(m)).Centroid(1,1);
-                   vesselBY = regionProps(inds(m)).Centroid(1,2);
-
-                   distBetweenVessels = [vesselAX, vesselAY; ...
-                       vesselBX, vesselBY];
-                   pdistBetweenVessels = pdist(distBetweenVessels, 'euclidean');
-%                    disp('dist');
-%                    disp(pdistBetweenVessels);
-
-                   if pdistBetweenVessels < distanceBetweenVessels
-                       %disp('entrou');
-                       %remove inds k and m from inds
-                       
-                       %ind = [1 4 7] ; % indices to be removed
-                       %A(ind) = []; % remove
-                       
-                       %array_inds array to put vessels that are too close
-                       %to other vessels
-                       
-                       %detecting if k and m are in array_inds
-                       arrayDetection = ismember([k m],array_inds);
-                       if f == 82
-                        f=f;    
-                       end
-                       %k is not find on array_inds
-                       if arrayDetection(1,1) == 0
-                           array_inds = [array_inds k];
-                       end
-                       
-                       %m is not find on array_inds
-                       if arrayDetection(1,2) == 0
-                           array_inds = [array_inds m];
-                       end
-                   end                   
-               end
-            end         
+                if k ~= m
+                    %run all inds to search for inds that are too close
+                    vesselAX = regionProps(inds(k)).Centroid(1,1);
+                    vesselAY = regionProps(inds(k)).Centroid(1,2);
+                    vesselBX = regionProps(inds(m)).Centroid(1,1);
+                    vesselBY = regionProps(inds(m)).Centroid(1,2);
+                    
+                    distBetweenVessels = [vesselAX, vesselAY; ...
+                        vesselBX, vesselBY];
+                    pdistBetweenVessels = pdist(distBetweenVessels, 'euclidean');
+                    %                    disp('dist');
+                    %                    disp(pdistBetweenVessels);
+                    
+                    if pdistBetweenVessels < distanceBetweenVessels
+                        %disp('entrou');
+                        %remove inds k and m from inds
+                        
+                        %ind = [1 4 7] ; % indices to be removed
+                        %A(ind) = []; % remove
+                        
+                        %array_inds array to put vessels that are too close
+                        %to other vessels
+                        
+                        %detecting if k and m are in array_inds
+                        arrayDetection = ismember([k m],array_inds);
+                        if f == 82
+                            f=f;
+                        end
+                        %k is not find on array_inds
+                        if arrayDetection(1,1) == 0
+                            array_inds = [array_inds k];
+                        end
+                        
+                        %m is not find on array_inds
+                        if arrayDetection(1,2) == 0
+                            array_inds = [array_inds m];
+                        end
+                    end
+                end
+            end
         end
         
         % ------------------------------------------------------ %
         % END Spatial Validation Algorithm
         % ------------------------------------------------------ %
         
-%         disp('regnumCalisto');
-%         disp(regnum);
+        %         disp('regnumCalisto');
+        %         disp(regnum);
         %all vessels processed
         allInds = inds;
-         % ----------------------------------------------------------- %
-%         disp('array_inds');
-%         disp(array_inds);
-%         disp('allInds');
-%         disp(allInds);
         % ----------------------------------------------------------- %
-%         allInds = unique(array_inds);
-%         withoutDuplicates = unique(array_inds);
+        %         disp('array_inds');
+        %         disp(array_inds);
+        %         disp('allInds');
+        %         disp(allInds);
+        % ----------------------------------------------------------- %
+        %         allInds = unique(array_inds);
+        %         withoutDuplicates = unique(array_inds);
         allInds(array_inds) = [];
-%         allInds = withoutDuplicates;
+        %         allInds = withoutDuplicates;
         
         % ----------------------------------------------------------- %
         
-%         disp('POSallInds');
-%         disp(allInds);
+        %         disp('POSallInds');
+        %         disp(allInds);
         % ----------------------------------------------------------- %
         
         % NOW allInds have only vessels aproved by spacial validation algoritm
@@ -267,56 +268,56 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         %%change buffer lines from 1-6 to 2-7
         %%frame 7 will be overwriten
         
-%         numSim = 10;
-%         your_cell = cell(numSim,1);
-%         %Generating data and storing it in a cell array
-%         for ii = 1:numSim
-%             % insert line col on first and second rows(columns?)
-%             temp_mat = randi(100,randi(10,1,2));
-%             your_cell{ii} = temp_mat;
-%         end
-%         %Getting all data in a vector
-%         your_result = cell2mat(cellfun(@(x)   x(:),your_cell,'uniformoutput',false));
-%         
-%         bufferArr(end) = [];        
-%         %
+        %         numSim = 10;
+        %         your_cell = cell(numSim,1);
+        %         %Generating data and storing it in a cell array
+        %         for ii = 1:numSim
+        %             % insert line col on first and second rows(columns?)
+        %             temp_mat = randi(100,randi(10,1,2));
+        %             your_cell{ii} = temp_mat;
+        %         end
+        %         %Getting all data in a vector
+        %         your_result = cell2mat(cellfun(@(x)   x(:),your_cell,'uniformoutput',false));
+        %
+        %         bufferArr(end) = [];
+        %         %
         
         
         
         %%% ========================== %%%
-%         N = 7;
-%         
-%         L = 10; % L e C sao as linhas e colunas da imagem lida
-%    
-%         C = 10;
-%         
-%         ACC = zeros=(L,C,N);
-%         
-%         for k = 1 : N
-%             Acc(:,:,k) = k * ones(L, C);
-%         end
-%         
-%         %FIFO
-%         
-%         aux = zeros(size(Acc));
-%         
-%         
-%         for k = 2 : N
-%             aux(:,:,k) = Acc(:,:,k);
-%         end
-%         
-%         aux(:,:,1) = %imagem nova
+        %         N = 7;
+        %
+        %         L = 10; % L e C sao as linhas e colunas da imagem lida
+        %
+        %         C = 10;
+        %
+        %         ACC = zeros=(L,C,N);
+        %
+        %         for k = 1 : N
+        %             Acc(:,:,k) = k * ones(L, C);
+        %         end
+        %
+        %         %FIFO
+        %
+        %         aux = zeros(size(Acc));
+        %
+        %
+        %         for k = 2 : N
+        %             aux(:,:,k) = Acc(:,:,k);
+        %         end
+        %
+        %         aux(:,:,1) = %imagem nova
         
         %%% ========================== %%%
         
-%         if regnumAllInds
-%             arrLineCol = [];
-%             for j = 1 : regnumAllInds
-%                 arrLineCol = [arrLineCol [lin col]];
-%             end
-%             bufferArr(1) = arrLineCol;
-%         end
-
+        %         if regnumAllInds
+        %             arrLineCol = [];
+        %             for j = 1 : regnumAllInds
+        %                 arrLineCol = [arrLineCol [lin col]];
+        %             end
+        %             bufferArr(1) = arrLineCol;
+        %         end
+        
         % ------------------------------------------------------ %
         % Temporal Validation Algorithm
         % ------------------------------------------------------ %
@@ -346,7 +347,7 @@ for f = nInitialFrame : stepRoi : nTotalFrames
             if numFrameIterations < 7
                 numFrameIterationsAux = maxBufferNum;
                 
-     
+                
                 %%%%%%%%%%%%To REcode
                 if numFrameIterations == 1
                     bufferStruct(1).g = arrAllIndsRectangleAux;
@@ -374,17 +375,50 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                 disp('My Buffer Struct: ');
                 disp(bufferStruct(1));
             end
-%             disp('My Buffer Struct: ');
-%             disp(bufferStruct(1).g);
+            %             disp('My Buffer Struct: ');
+            %             disp(bufferStruct(1).g);
             %BufferStruct is incremented because buffer will be incremented
             numFrameIterations = numFrameIterations + 1;
-        end    
+            
+            % ----------------------------------------------------------- %
+            %   filtering vessels to know what to print
+            % ----------------------------------------------------------- %
+            % bufferStruct(1).a has the possible vessels to print
+            
+            %%calculates the number of occurencies of vessels in Layers A on
+            %%other Layers
+            [colA,n] = size(bufferStruct(1).a);
+            vesselOcurrencies = zeros(1,colA);
+            
+
+            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).b);
+
+            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).c);
+
+            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).d);
+
+            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).e);
+
+            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).f);
+
+            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).g);
+            %%NOW vesselOcurrencies has counter with numbers of ocurrencies in
+            %%of the vessels in first layer with the rest of the buffer
+            
+
+            for r=1:colA
+                if vesselOcurrencies(1,r) > 4
+                    indsTemp = [indsTemp r];
+                end
+            end
+            
+        end
         
         
         % ------------------------------------------------------ %
         % END Temporal Validation Algorithm
         % ------------------------------------------------------ %
-
+        
         % ----------------------------------------------------------- %
         %doing boxes on approved inds
         % ----------------------------------------------------------- %
@@ -392,42 +426,81 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         %regnumAllInds = length(allInds); % change variables
         
         %number of yellow boxes to print
-        if numFrameIterations > 7
-            [m,n] = size(bufferStruct(1).a);
-            regnumbufferStruct = m;
+%         if numFrameIterations > 7
+             [nIndsTemp,m] = size(indsTemp);
+%             regnumbufferStruct = m;
             
             %%%if bufferStruct(1).a is a matrix
-            if regnumbufferStruct > 1
-            %if regnumAllInds % change variables
+%             if regnumbufferStruct > 1
+                %if regnumAllInds % change variables
                 %structBufferLine = [];
-                for j=1: 1: regnumbufferStruct % change variables
-    %                 [lin, col] = find(lb == allInds(j));
-    %                 upLPoint = min([lin col]);
-    %                 dWindow  = max([lin col]) - upLPoint + 1;
+                for j=1: 1: nIndsTemp % change variables
+                    %                 [lin, col] = find(lb == allInds(j));
+                    %                 upLPoint = min([lin col]);
+                    %                 dWindow  = max([lin col]) - upLPoint + 1;
                     %structBufferLine = []; %% First buffer line TOFIX
                     
-    %                 rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
-    %                     'linewidth',2);
-                    rectangle('Position',bufferStruct(1).a(j,:),'EdgeColor',[1 1 0],...
+                    %                 rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
+                    %                     'linewidth',2);
+                    rectangle('Position',bufferStruct(1).a(nIndsTemp(j,:),:),'EdgeColor',[1 1 0],...
                         'linewidth',2);
-
+                    
                     %%%Temporal Buffer
                     %%add regionProps to j(index) of the buffer
                 end
-            
-            else
-                %%%if bufferStruct(1).a is an array
-                if regnumbufferStruct == 1
-                    rectangle('Position',bufferStruct(1).a,'EdgeColor',[1 1 0],...
-                        'linewidth',2); 
-                end
-                reglist = struct([]);
+                
+%             else
+%                 reglist = struct([]);
+%             end
+        end
+    end
+    
+    drawnow
+    
+end
+
+
+% ------------------------------------------------------ %
+% Function foundOnBufferLayer( layerA, layerN )
+% ------------------------------------------------------ %
+
+%input layer a and other layer and as output vector with number of
+%proximities found
+function bufferCount = foundOnBufferLayer( layerA, layerN )
+%%%Layer A is bufferStruct(1).a
+%%%if bufferStruct(1).a is a matrix
+[p,q] = size(layerA);
+[r,s] = size(layerN);
+colLayerA = p;
+colLayerN = r;
+bufferCount = zeros(1,p);
+distanceBetweenVessels = 250;
+%LayerA is a Matrix
+
+%k index in buffer.a
+for k=1:colLayerA
+    isFirstLayer = false;
+    for m=1:colLayerN
+        
+        vesselA = layerA(k,:);
+        vesselN = layerN(m,:);
+        %search if A(k) and N(m) vessels are close
+        vesselAX = vesselA(1)+vesselA(3)/2;
+        vesselAY = vesselA(2)+vesselA(4)/2;
+        vesselNX = vesselN(1)+vesselN(3)/2;
+        vesselNY = vesselN(2)+vesselN(4)/2;
+        distBetweenVessels = [vesselAX, vesselAY; ...
+            vesselNX, vesselNY];
+        pdistBetweenVessels = pdist(distBetweenVessels, 'euclidean');
+        
+        if pdistBetweenVessels < distanceBetweenVessels
+            isFirstLayer = true;
+            if isFirstLayer == true
+                bufferCount(k) = bufferCount(k) + 1;
             end
         end
     end
-
-    drawnow
-
 end
 
+end
 
