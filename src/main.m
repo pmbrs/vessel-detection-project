@@ -7,7 +7,7 @@
 load vesselLabels.txt;
 %vesselsLabels(100,2);
 
-% -------------------- CONST ---------------------- %
+% ----------------------- CONST ------------------------- %
 RegionBuffer = [];
 stepRoi = 5;
 
@@ -32,6 +32,9 @@ distanceBetweenVessels = 80;
 %1cm=58pixes(units)
 
 bufferArr = [];
+reglist = [];
+rectangleAux = [];
+arrAllIndsRectangleAux = [];
 
 mainFigure = figure(1);
 
@@ -39,16 +42,58 @@ mainFigure = figure(1);
 
 se = strel('disk',3);
 
-% -------------------- END Const -------------------- %
+% ---------------------- END Const ---------------------- %
 
-% --------------------------------------------------- %
+% ------------------------------------------------------- %
 
-% -------------------- ROI -------------------------- %
+% ---------------------- ROI ---------------------------- %
 % Remove object intersection
 % Faz as caixinhas
 
+% ------------------------------------------------------- %
+% --------------------- BUFFER -------------------------- %
+% ------------------------------------------------------- %
+
+% mask = zeros(dWindow);
+% 
+% coords = [lin col] - ones(size(lin, 1), 1) * upLPoint + ones(length(lin), 2);
+% ind = dWindow(1) * (coords(:,2) - 1) + coords(:,1);
+% mask(ind) = ones(1, length(ind));
+% 
+% reglist(j) = struct('position', rectangleAux, ...
+%     'ulPoint', upLPoint, 'boxDim', dWindow, 'userData', []);
+% reglist(j).userData = {'', 0};
+
+maxBufferNum = 7;
+numFrameIterations = 0;
+numFrameIterationsAux = 0;
+
+bufferStructNames = ['line1'; ...
+                     'line2'; ...
+                     'line3'; ...
+                     'line4'; ...
+                     'line5'; ...
+                     'line6'; ...
+                     'line7'];
+
+bufferStruct = struct('line1', [], ...
+                      'line2', [], ...
+                      'line3', [], ...
+                      'line4', [], ...
+                      'line5', [], ...
+                      'line6', [], ...
+                      'line7', []);
+
+%disp('Testing Buffer: ');
+%disp(bufferStruct);
+
+% ------------------------------------------------------- %
+% ------------------- END BUFFER ------------------------ %
+% ------------------------------------------------------- %
+
 for f = nInitialFrame : stepRoi : nTotalFrames 
     array_inds = [];
+    numFrameIterations = numFrameIterations + 1; 
     
     imgfrNew = imread(sprintf('../Frames/frame%.4d.jpg', ...
                     baseNum + f));
@@ -58,6 +103,25 @@ for f = nInitialFrame : stepRoi : nTotalFrames
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    
+    % ------------------------------------------------------ %
+    % Buffer Shift Lines
+    % ------------------------------------------------------ %
+    
+    if maxBufferNum > numFrameIterations
+        numFrameIterationsAux = maxBufferNum;
+    else
+        numFrameIterationsAux = numFrameIterations;
+    end
+    
+    for mb = numFrameIterationsAux : -1 : 2
+        value = getfield(bufferStruct, bufferStructNames(mb - 1));
+        setfield(bufferStruct, bufferStructNames(mb), value);
+    end
+    
+    % ------------------------------------------------------ %
+    % END Buffer Shift Lines
+    % ------------------------------------------------------ %
 
     sprintf('ROI %d',f);
     hold off
@@ -101,9 +165,10 @@ for f = nInitialFrame : stepRoi : nTotalFrames
     disp(regnum);
     % ----------------------------------------------------------- %
     if regnum
-        % ----------------------------------------------------------- %
-        %%%Spacial Validation
-        % ----------------------------------------------------------- %
+        
+        % ------------------------------------------------------ %
+        % Spatial Validation Algorithm
+        % ------------------------------------------------------ %
 
             
         for k=1:regnum
@@ -149,6 +214,11 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                end
             end         
         end
+        
+        % ------------------------------------------------------ %
+        % END Temporal Validation Algorithm
+        % ------------------------------------------------------ %
+        
         disp('regnumCalisto');
         disp(regnum);
         %all vessels processed
@@ -230,20 +300,59 @@ for f = nInitialFrame : stepRoi : nTotalFrames
 %             end
 %             bufferArr(1) = arrLineCol;
 %         end
+
+        % ------------------------------------------------------ %
+        % Temporal Validation Algorithm
+        % ------------------------------------------------------ %
         
-        % ----------------------------------------------------------- %
-        %doing boxes on approved inds
-        % ----------------------------------------------------------- %
+        % Converting from lin col to rectangle format
+        % bufferStruct
         regnumAllInds = length(allInds);
-    
         if regnumAllInds
-            for j=1:regnumAllInds
+            arrAllIndsRectangleAux = [];
+            for j = 1 : regnumAllInds
                 [lin, col] = find(lb == allInds(j));
                 upLPoint = min([lin col]);
                 dWindow  = max([lin col]) - upLPoint + 1;
+                %structBufferLine = []; %% First buffer line TOFIX
+                rectangleAux = [fliplr(upLPoint) fliplr(dWindow)];
+                
+                % add the rectangle aux to arrAllIndsRectangleAux
+                arrAllIndsRectangleAux = [arrAllIndsRectangleAux; rectangleAux];
+                %%%Temporal Buffer
+                %%add regionProps to j(index) of the buffer
 
-                rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
-                    'linewidth',2);
+            end
+            % add the arrAllIndsRectangleAux to buffer first line
+            field = 'line1';
+            bufferStruct = setfield(bufferStruct, field, arrAllIndsRectangleAux);
+            disp('My Buffer Struct: ');
+            disp(bufferStruct);
+            
+        end
+        
+        % ------------------------------------------------------ %
+        % END Temporal Validation Algorithm
+        % ------------------------------------------------------ %
+
+        % ----------------------------------------------------------- %
+        %doing boxes on approved inds
+        % ----------------------------------------------------------- %
+        
+        %regnumAllInds = length(allInds); % change variables
+    
+        if regnumAllInds % change variables
+            structBufferLine = [];
+            for j=1:regnumAllInds % change variables
+%                 [lin, col] = find(lb == allInds(j));
+%                 upLPoint = min([lin col]);
+%                 dWindow  = max([lin col]) - upLPoint + 1;
+                structBufferLine = []; %% First buffer line TOFIX
+                
+%                 rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
+%                     'linewidth',2);
+%                 rectangle('Position',structBufferLine,'EdgeColor',[1 1 0],...
+%                     'linewidth',2);
 
                 %%%Temporal Buffer
                 %%add regionProps to j(index) of the buffer
@@ -251,8 +360,9 @@ for f = nInitialFrame : stepRoi : nTotalFrames
 
 
             end
+        else
+            reglist = struct([]);
         end
-
     end
 
     drawnow
