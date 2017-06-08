@@ -18,7 +18,7 @@ baseNum = 13;
 % To use txt values use nVesselLabels = nFrames + 1 %
 % nVesselLabels start in 1 and nFrames starts in 0  %
 nTotalFrames = 1533; % Total: 1533
-nInitialFrame = 12;  % Initial Boat: 12
+nInitialFrame = 1450;  % Initial Boat: 12
 
 thr_global = 180; % 180
 thr_diff = 18;    % 18 %60 fails detecting the boat sometimes
@@ -498,10 +498,12 @@ drawnow
 
 end
 mFigure = figure('Name','IoU')
-title(ax1,'Graphic')
-xlabel('???????') % x-axis label
-ylabel('Ratio') % y-axis label
+
+
 plot(vector);
+xlabel('Number of Frames') % x-axis label
+ylabel('Ratio') % y-axis label
+title(ax1,'Graphic')
 grid on
 grid minor
 %xlim([0 1000]); % x-axis limits
