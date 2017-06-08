@@ -38,10 +38,14 @@ rectangleAux = [];
 arrAllIndsRectangleAux = [];
 indsTemp = [];
 mainFigure = figure(1);
-
+vesselTrail = [];
 %numKeyFrames = 0;
 
 se = strel('disk',3);
+
+fileID = fopen('Output_labelling.txt','wb');
+fprintf(fileID,'%6s %2s %6s %10s %9s\n','Frame Number','X','Y','Width','Height');
+fclose(fileID);
 
 
 % ---------------------- END Const ---------------------- %
@@ -440,12 +444,30 @@ for f = nInitialFrame : stepRoi : nTotalFrames
             labelDraw(2)=labelDraw(2) + labelDraw(4);
             labelDraw(4) = abs(labelDraw(4));
         end
+        vesselTrail = [vesselTrail; f+1 labelDraw];
+        
+         A = [f+1; labelDraw(1); labelDraw(2); labelDraw(3); labelDraw(4) ];
+
+        fileID = fopen('Output_labelling.txt','a');
+        fprintf(fileID,'%6.0f %8.0f %8.0d %8.0d %8.0d\n',A);
+        fclose(fileID);
+    
         
         rectangle('Position', labelDraw,'EdgeColor',[0 1 0],'linewidth',2);
     end
     
     drawnow
+    
+ 
+    
 end
+%%generating txt
+
+
+    
+
+
+
 
 end
 
