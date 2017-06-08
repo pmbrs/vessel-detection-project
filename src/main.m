@@ -6,6 +6,7 @@ clear all, close all
 %importing labels from txt
 load vesselLabels.txt;
 %vesselsLabels(100,2);
+%temporal buffer 3 out of 5
 
 % ----------------------- CONST ------------------------- %
 RegionBuffer = [];
@@ -19,7 +20,7 @@ baseNum = 13;
 nTotalFrames = 1533; % Total: 1533
 nInitialFrame = 12;  % Initial Boat: 12
 
-thr_global = 150; % 180
+thr_global = 180; % 180
 thr_diff = 18;    % 18 %60 fails detecting the boat sometimes
 
 minArea = 100;  % 100
@@ -95,13 +96,13 @@ bufferStruct = struct('a', {}, ...
 
 for f = nInitialFrame : stepRoi : nTotalFrames
     array_inds = [];
-    
+    labelDraw=[];
     
     imgfrNew = imread(sprintf('../Frames/frame%.4d.jpg', ...
         baseNum + f));
-    disp('-----------------------------------------------------------');
-    disp('f');
-    disp(f);
+%     disp('-----------------------------------------------------------');
+%     disp('f');
+%     disp(f);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -269,55 +270,7 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         %%change buffer lines from 1-6 to 2-7
         %%frame 7 will be overwriten
         
-        %         numSim = 10;
-        %         your_cell = cell(numSim,1);
-        %         %Generating data and storing it in a cell array
-        %         for ii = 1:numSim
-        %             % insert line col on first and second rows(columns?)
-        %             temp_mat = randi(100,randi(10,1,2));
-        %             your_cell{ii} = temp_mat;
-        %         end
-        %         %Getting all data in a vector
-        %         your_result = cell2mat(cellfun(@(x)   x(:),your_cell,'uniformoutput',false));
-        %
-        %         bufferArr(end) = [];
-        %         %
         
-        
-        
-        %%% ========================== %%%
-        %         N = 7;
-        %
-        %         L = 10; % L e C sao as linhas e colunas da imagem lida
-        %
-        %         C = 10;
-        %
-        %         ACC = zeros=(L,C,N);
-        %
-        %         for k = 1 : N
-        %             Acc(:,:,k) = k * ones(L, C);
-        %         end
-        %
-        %         %FIFO
-        %
-        %         aux = zeros(size(Acc));
-        %
-        %
-        %         for k = 2 : N
-        %             aux(:,:,k) = Acc(:,:,k);
-        %         end
-        %
-        %         aux(:,:,1) = %imagem nova
-        
-        %%% ========================== %%%
-        
-        %         if regnumAllInds
-        %             arrLineCol = [];
-        %             for j = 1 : regnumAllInds
-        %                 arrLineCol = [arrLineCol [lin col]];
-        %             end
-        %             bufferArr(1) = arrLineCol;
-        %         end
         
         % ------------------------------------------------------ %
         % Temporal Validation Algorithm
@@ -338,14 +291,12 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                 
                 % add the rectangleAux to arrAllIndsRectangleAux
                 arrAllIndsRectangleAux = [arrAllIndsRectangleAux; rectangleAux];
-                disp ('arrAllIndsRectangleAux');
-                disp (arrAllIndsRectangleAux);
+%                 disp ('arrAllIndsRectangleAux');
+%                 disp (arrAllIndsRectangleAux);
                 
             end
             % add the arrAllIndsRectangleAux to buffer first line
-            %field = 'a';
-            %bufferStruct = setfield(bufferStruct, field, arrAllIndsRectangleAux);
-            %bufferStruct(1).bufferStructNames(1);
+
             
             %if numFrameIterations < 7 buffer is not full
             if numFrameIterations < 7
@@ -391,29 +342,30 @@ for f = nInitialFrame : stepRoi : nTotalFrames
             %%calculates the number of occurencies of vessels in Layers A on
             %%other Layers
             
-            disp ('bufferStruct(1).a');
-            disp (bufferStruct(1).a);
+%             disp ('bufferStruct(1).a');
+%             disp (bufferStruct(1).a);
             [colA,n] = size(bufferStruct(1).a);
             vesselOcurrencies = zeros(1,colA);
             
             
             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).b);
             
-            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).c);
+             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).c);
             
             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).d);
             
             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).e);
             
-            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).f);
-            
-            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).g);
+%             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).f);
+%             
+%             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).g);
             %%NOW vesselOcurrencies has counter with numbers of ocurrencies in
             %%of the vessels in first layer with the rest of the buffer
             
             indsTemp = [];
             for r=1:colA
-                if vesselOcurrencies(1,r) > 4
+                  % -----------------3 out of 5-------------------- %
+                if vesselOcurrencies(1,r) > 3
                     indsTemp = [indsTemp r];
                 end
             end
@@ -451,11 +403,15 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                 
                 %                 rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
                 %                     'linewidth',2);
-                disp ('Element to draw');
-                disp (bufferStruct(1).a(indsTemp(1,j),:));
+%                 disp ('Element to draw');
+%                 disp (bufferStruct(1).a(indsTemp(1,j),:));
+            if nIndsTemp == 2
+                z = f;
+            end
+
                 rectangle('Position',bufferStruct(1).a(indsTemp(1,j),:),'EdgeColor',[1 1 0],...
                     'linewidth',2);
-                drawnow
+                hold on
                 %%%Temporal Buffer
                 %%add regionProps to j(index) of the buffer
             end
@@ -465,8 +421,31 @@ for f = nInitialFrame : stepRoi : nTotalFrames
             %             end
         end
     end
+    
+    [linLabel colLabel] = find (vesselLabels(:,1) == f-1+3*stepRoi);
+    
+    if colLabel == 1
+        labelDraw = [labelDraw vesselLabels(linLabel,2:5)];
+    end
+    isnotempty = 0;
+    if ~isempty(labelDraw)
+        isnotempty = 1;
+        %se o width for negativo
+        if labelDraw(3) < 0
+            labelDraw(1)=labelDraw(1) + labelDraw(3);
+            labelDraw(3) = abs(labelDraw(3));
+        end
+        %se o height for negativo
+        if labelDraw(4) < 0
+            labelDraw(2)=labelDraw(2) + labelDraw(4);
+            labelDraw(4) = abs(labelDraw(4));
+        end
+        
+        rectangle('Position', labelDraw,'EdgeColor',[0 1 0],'linewidth',2);
+    end
+    
+    drawnow
 end
-drawnow
 
 end
 
@@ -485,7 +464,7 @@ function bufferCount = foundOnBufferLayer( layerA, layerN )
 colLayerA = p;
 colLayerN = r;
 bufferCount = zeros(1,p);
-distanceBetweenVessels = 250;
+distanceBetweenVessels = 200;
 %LayerA is a Matrix
 
 %k index in buffer.a
