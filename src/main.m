@@ -8,7 +8,7 @@ load vesselLabels.txt;
 %vesselsLabels(100,2);
 %temporal buffer 3 out of 5
 
-% ----------------------- CONST ------------------------- %
+% ------------------------ CONST ------------------------- %
 RegionBuffer = [];
 stepRoi = 1;
 
