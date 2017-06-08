@@ -10,7 +10,7 @@ load vesselLabels.txt;
 
 % ----------------------- CONST ------------------------- %
 RegionBuffer = [];
-stepRoi = 5;
+stepRoi = 1;
 
 %baseBkg = 13; % Initial Frame: 0 %
 baseNum = 13;
@@ -40,13 +40,13 @@ indsTemp = [];
 mainFigure = figure(1);
 vesselTrail = [];
 %numKeyFrames = 0;
-
+vesselTrailNow = [];
 se = strel('disk',3);
-
+vector=[];
 fileID = fopen('Output_labelling.txt','wb');
 fprintf(fileID,'%6s %2s %6s %10s %9s\n','Frame Number','X','Y','Width','Height');
 fclose(fileID);
-
+vector =[];
 
 % ---------------------- END Const ---------------------- %
 
@@ -99,6 +99,7 @@ bufferStruct = struct('a', {}, ...
 % ------------------------------------------------------- %
 
 for f = nInitialFrame : stepRoi : nTotalFrames
+    
     array_inds = [];
     labelDraw=[];
     
@@ -425,10 +426,9 @@ for f = nInitialFrame : stepRoi : nTotalFrames
             if nIndsTemp == 2
                 z = f;
             end
-
-                rectangle('Position',bufferStruct(1).a(indsTemp(1,j),:),'EdgeColor',[1 1 0],...
-                    'linewidth',2);
-                hold on
+                vesselTrailNow = bufferStruct(1).a(indsTemp(1,j),:);
+        
+                
                 %%%Temporal Buffer
                 %%add regionProps to j(index) of the buffer
             end
@@ -439,49 +439,56 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         end
     end
     
-    [linLabel colLabel] = find (vesselLabels(:,1) == f-1+3*stepRoi);
+    [linLabel colLabel] = find (vesselLabels(:,1) == f+14);
     
     if colLabel == 1
         labelDraw = [labelDraw vesselLabels(linLabel,2:5)];
     end
     isnotempty = 0;
     if ~isempty(labelDraw)
-        isnotempty = 1;
-        %se o width for negativo
-        if labelDraw(3) < 0
-            labelDraw(1)=labelDraw(1) + labelDraw(3);
-            labelDraw(3) = abs(labelDraw(3));
-        end
-        %se o height for negativo
-        if labelDraw(4) < 0
-            labelDraw(2)=labelDraw(2) + labelDraw(4);
-            labelDraw(4) = abs(labelDraw(4));
-        end
-        vesselTrail = [vesselTrail; f+1 labelDraw];
-        
-         A = [f+1; labelDraw(1); labelDraw(2); labelDraw(3); labelDraw(4) ];
-
-        fileID = fopen('Output_labelling.txt','a');
-        fprintf(fileID,'%6.0f %8.0f %8.0d %8.0d %8.0d\n',A);
-        fclose(fileID);
-    
-        
-        rectangle('Position', labelDraw,'EdgeColor',[0 1 0],'linewidth',2);
+        if ~isempty(vesselTrailNow)
+            isnotempty = 1;
+            %se o width for negativo
+            if labelDraw(3) < 0
+                labelDraw(1)=labelDraw(1) + labelDraw(3);
+                labelDraw(3) = abs(labelDraw(3));
+            end
+            %se o height for negativo
+            if labelDraw(4) < 0
+                labelDraw(2)=labelDraw(2) + labelDraw(4);
+                labelDraw(4) = abs(labelDraw(4));
+            end
+            vesselTrail = [vesselTrail; f+1 labelDraw];
+            
+            A = [f+1; labelDraw(1); labelDraw(2); labelDraw(3); labelDraw(4)];
+            
+            vector=[vector bboxOverlapRatio(labelDraw, vesselTrailNow)];
+            rectangle('Position', labelDraw,'EdgeColor',[0 1 0],'linewidth',2);
+            
+            rectangle('Position',vesselTrailNow,'EdgeColor',[1 1 0],...
+                    'linewidth',2);
+            
+        else
+            vector=[vector 0];
+        end 
+    else
+        vector=[vector 0];
     end
     
     
     
     drawnow
-    
- 
-    
+   
 end
-%%generating txt
-
-
-    
-
-
+mFigure = figure('Name','IoU')
+title(ax1,'Graphic')
+xlabel('???????') % x-axis label
+ylabel('Ratio') % y-axis label
+plot(vector);
+grid on
+grid minor
+%xlim([0 1000]); % x-axis limits
+%ylim([-0.4 0.8]); % y-axis limits
 
 
 end
@@ -501,7 +508,7 @@ function bufferCount = foundOnBufferLayer( layerA, layerN )
 colLayerA = p;
 colLayerN = r;
 bufferCount = zeros(1,p);
-distanceBetweenVessels = 200;
+distanceBetweenVessels = 50;
 %LayerA is a Matrix
 
 %k index in buffer.a
