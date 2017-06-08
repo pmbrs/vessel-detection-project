@@ -8,7 +8,7 @@ load vesselLabels.txt;
 %vesselsLabels(100,2);
 %temporal buffer 3 out of 5
 
-% ------------------------ CONST ------------------------- %
+% ----------------------- CONST ------------------------- %
 RegionBuffer = [];
 stepRoi = 1;
 
@@ -18,7 +18,7 @@ baseNum = 13;
 % To use txt values use nVesselLabels = nFrames + 1 %
 % nVesselLabels start in 1 and nFrames starts in 0  %
 nTotalFrames = 1533; % Total: 1533
-nInitialFrame = 1510;  % Initial Boat: 12
+nInitialFrame = 12;  % Initial Boat: 12
 
 thr_global = 180; % 180
 thr_diff = 18;    % 18 %60 fails detecting the boat sometimes
@@ -39,7 +39,6 @@ arrAllIndsRectangleAux = [];
 indsTemp = [];
 mainFigure = figure(1);
 vesselTrail = [];
-vesselTrailSREShift = [];
 %numKeyFrames = 0;
 vesselTrailNow = [];
 se = strel('disk',3);
@@ -106,9 +105,9 @@ for f = nInitialFrame : stepRoi : nTotalFrames
     
     imgfrNew = imread(sprintf('../Frames/frame%.4d.jpg', ...
         baseNum + f));
-%     disp('-----------------------------------------------------------');
-%     disp('f');
-%     disp(f);
+    %     disp('-----------------------------------------------------------');
+    %     disp('f');
+    %     disp(f);
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,16 +211,16 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                     %                    disp(pdistBetweenVessels);
                     
                     % ----------- Test Grafic Distance ------------------- %
-    
-%                     boatDistance = [];
-% 
-%                     x = boatDistance; % Distance
-%                     y1 = sin(x);       % SRE
-%                     y2 = sin(x-0.25);  % TVA
-%                     y3 = sin(x-0.5);   % Something
-% 
-%                     figure
-%                     plot(x,y1,x,y2,'--',x,y3,':')
+                    
+                    %                     boatDistance = [];
+                    %
+                    %                     x = boatDistance; % Distance
+                    %                     y1 = sin(x);       % SRE
+                    %                     y2 = sin(x-0.25);  % TVA
+                    %                     y3 = sin(x-0.5);   % Something
+                    %
+                    %                     figure
+                    %                     plot(x,y1,x,y2,'--',x,y3,':')
                     % --------------------------------------------------- %
                     
                     if pdistBetweenVessels < distanceBetweenVessels
@@ -310,12 +309,12 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                 
                 % add the rectangleAux to arrAllIndsRectangleAux
                 arrAllIndsRectangleAux = [arrAllIndsRectangleAux; rectangleAux];
-%                 disp ('arrAllIndsRectangleAux');
-%                 disp (arrAllIndsRectangleAux);
+                %                 disp ('arrAllIndsRectangleAux');
+                %                 disp (arrAllIndsRectangleAux);
                 
             end
             % add the arrAllIndsRectangleAux to buffer first line
-
+            
             
             %if numFrameIterations < 7 buffer is not full
             if numFrameIterations < 7
@@ -342,334 +341,171 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                     bufferStruct(1).b = arrAllIndsRectangleAux;
                 end
             else
-                
-                bufferStruct(1).a = arrAllIndsRectangleAux;
-                
-%                 disp('My Buffer Struct: ');
-%                 disp(bufferStruct(1));
             end
-            %             disp('My Buffer Struct: ');
-            %             disp(bufferStruct(1).g);
             
+            bufferStruct(1).a = arrAllIndsRectangleAux;
             
-            %%%%%%%%%%%%EndTo REcode
-            % ----------------------------------------------------------- %
-            %   filtering vessels to know what to print
-            % ----------------------------------------------------------- %
-            % bufferStruct(1).a has the possible vessels to print
-            
-            %%calculates the number of occurencies of vessels in Layers A on
-            %%other Layers
-            
-%             disp ('bufferStruct(1).a');
-%             disp (bufferStruct(1).a);
-            [colA,n] = size(bufferStruct(1).a);
-            vesselOcurrencies = zeros(1,colA);
-            
-            
-            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).b);
-            
-             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).c);
-            
-            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).d);
-            
-            vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).e);
-            
-%             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).f);
-%             
-%             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).g);
-            %%NOW vesselOcurrencies has counter with numbers of ocurrencies in
-            %%of the vessels in first layer with the rest of the buffer
-            
-            indsTemp = [];
-            for r=1:colA
-                  % -----------------3 out of 5-------------------- %
-                if vesselOcurrencies(1,r) > 3
-                    indsTemp = [indsTemp r];
-                end
+            if f == 13
+                bufferStruct(1).a = [584 1 10 3];
+                disp('13');
+                disp(bufferStruct(1).a);
             end
-            %BufferStruct is incremented because buffer will be incremented
-            numFrameIterations = numFrameIterations + 1;
+            if f == 250
+                bufferStruct(1).a = [846 746 83 18];
+                 disp('250');
+                disp(bufferStruct(1).a);
+            end
+            if f == 450
+                bufferStruct(1).a = [105 728 28 41];
+                 disp('450');
+                disp(bufferStruct(1).a);
+            end
+            if f == 650
+                bufferStruct(1).a = [1 267 9 12];
+                 disp('650');
+                disp(bufferStruct(1).a);
+            end
+            if f == 880
+                bufferStruct(1).a = [955 31 22 38];
+                 disp('880');
+                disp(bufferStruct(1).a);
+            end
+            if f == 1200
+                bufferStruct(1).a = [193 689 27 80];
+                 disp('1200');
+                disp(bufferStruct(1).a);
+            end
+
             
             
             
             
-            
-            % ------------------------------------------------------ %
-            % END Temporal Validation Algorithm
-            % ------------------------------------------------------ %
-            
-            % ----------------------------------------------------------- %
-            %doing boxes on approved inds
-            % ----------------------------------------------------------- %
-            
-            %regnumAllInds = length(allInds); % change variables
-            
-            %number of yellow boxes to print
-            %         if numFrameIterations > 7
-            [nIndsTemp,m] = size(indsTemp);
-            %             regnumbufferStruct = m;
-            
-            %%%if bufferStruct(1).a is a matrix
-            %             if regnumbufferStruct > 1
-            %if regnumAllInds % change variables
-            %structBufferLine = [];
-            for j=1: 1: nIndsTemp % change variables
-                %                 [lin, col] = find(lb == allInds(j));
-                %                 upLPoint = min([lin col]);
-                %                 dWindow  = max([lin col]) - upLPoint + 1;
-                %structBufferLine = []; %% First buffer line TOFIX
-                
-                %                 rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
-                %                     'linewidth',2);
-%                 disp ('Element to draw');
-%                 disp (bufferStruct(1).a(indsTemp(1,j),:));
+            %                 disp('My Buffer Struct: ');
+            %                 disp(bufferStruct(1));
+        %end
+        %             disp('My Buffer Struct: ');
+        %             disp(bufferStruct(1).g);
+        
+        
+        %%%%%%%%%%%%EndTo REcode
+        % ----------------------------------------------------------- %
+        %   filtering vessels to know what to print
+        % ----------------------------------------------------------- %
+        % bufferStruct(1).a has the possible vessels to print
+        
+        %%calculates the number of occurencies of vessels in Layers A on
+        %%other Layers
+        
+        %             disp ('bufferStruct(1).a');
+        %             disp (bufferStruct(1).a);
+        [colA,n] = size(bufferStruct(1).a);
+        vesselOcurrencies = zeros(1,colA);
+        
+        
+        vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).b);
+        
+        vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).c);
+        
+        vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).d);
+        
+        vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).e);
+        
+        %             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).f);
+        %
+        %             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).g);
+        %%NOW vesselOcurrencies has counter with numbers of ocurrencies in
+        %%of the vessels in first layer with the rest of the buffer
+        
+        indsTemp = [];
+        for r=1:colA
+            % -----------------3 out of 5-------------------- %
+            if vesselOcurrencies(1,r) > 3
+                indsTemp = [indsTemp r];
+            end
+        end
+        %BufferStruct is incremented because buffer will be incremented
+        numFrameIterations = numFrameIterations + 1;
+
+        % ------------------------------------------------------ %
+        % END Temporal Validation Algorithm
+        % ------------------------------------------------------ %
+        
+        % ----------------------------------------------------------- %
+        %doing boxes on approved inds
+        % ----------------------------------------------------------- %
+        
+        %regnumAllInds = length(allInds); % change variables
+        
+        %number of yellow boxes to print
+        %         if numFrameIterations > 7
+        [nIndsTemp,m] = size(indsTemp);
+        for j=1: 1: nIndsTemp % change variables
             if nIndsTemp == 2
                 z = f;
             end
-                vesselTrailNow = bufferStruct(1).a(indsTemp(1,j),:);
-        
-                
-                %%%Temporal Buffer
-                %%add regionProps to j(index) of the buffer
-            end
+            vesselTrailNow = bufferStruct(1).a(indsTemp(1,j),:);
             
-            %             else
-            %                 reglist = struct([]);
-            %             end
+            
+            %%%Temporal Buffer
+            %%add regionProps to j(index) of the buffer
         end
+        
+        %             else
+        %                 reglist = struct([]);
+        %             end
     end
-    
-    [linLabel colLabel] = find (vesselLabels(:,1) == f+14);
-    
-    if colLabel == 1
-        labelDraw = [labelDraw vesselLabels(linLabel,2:5)];
-    end
-    isnotempty = 0;
-    if ~isempty(labelDraw)
-        if ~isempty(vesselTrailNow)
-            isnotempty = 1;
-            %se o width for negativo
-            if labelDraw(3) < 0
-                labelDraw(1)=labelDraw(1) + labelDraw(3);
-                labelDraw(3) = abs(labelDraw(3));
-            end
-            %se o height for negativo
-            if labelDraw(4) < 0
-                labelDraw(2)=labelDraw(2) + labelDraw(4);
-                labelDraw(4) = abs(labelDraw(4));
-            end
-            
-            vesselTrail = [vesselTrail; f+1 labelDraw];
-            vesselTrailSREShift = [vesselTrailSREShift; f * 1.10 + 1 labelDraw];
-            
-            disp('Vessel Trail SRE Shift: ');
-            disp(vesselTrailSREShift);
-            
-            disp('Vessel Trail Normal: ');
-            disp(vesselTrail);
-            
-            A = [f+1; labelDraw(1); labelDraw(2); labelDraw(3); labelDraw(4)];
-            
-            vector=[vector bboxOverlapRatio(labelDraw, vesselTrailNow)];            
-            rectangle('Position', labelDraw,'EdgeColor',[0 1 0],'linewidth',2);
-            
-            labelDraw1R = labelDraw;
-            labelDraw1R(1) = labelDraw(1) + labelDraw(1) * 0.10;
-            labelDraw1R(3) = labelDraw(3) * 0.80;
-            labelDraw1R(4) = labelDraw(4) * 0.80;
-            
-            labelDraw1U = labelDraw;
-            labelDraw1U(2) = labelDraw(2) + labelDraw(2) * 0.10;
-            labelDraw1U(3) = labelDraw(3) * 0.80;
-            labelDraw1U(4) = labelDraw(4) * 0.80;
-            
-            labelDraw1D = labelDraw;
-            labelDraw1D(1) = labelDraw(1) + labelDraw(1) * 0.10;
-            labelDraw1D(2) = labelDraw(2) + labelDraw(2) * 0.10;
-            labelDraw1D(3) = labelDraw(3) * 0.80;
-            labelDraw1D(4) = labelDraw(4) * 0.80;
-            
-            labelDraw2R = labelDraw;
-            labelDraw2R(1) = labelDraw(1) + labelDraw(1) * 0.10;
-            labelDraw2R(3) = labelDraw(3) * 0.90;
-            labelDraw2R(4) = labelDraw(4) * 0.90;
-            
-            labelDraw2U = labelDraw;
-            labelDraw2U(2) = labelDraw(2) + labelDraw(2) * 0.10;
-            labelDraw2U(3) = labelDraw(3) * 0.90;
-            labelDraw2U(4) = labelDraw(4) * 0.90;
-            
-            labelDraw2D = labelDraw;
-            labelDraw2D(1) = labelDraw(1) + labelDraw(1) * 0.10;
-            labelDraw2D(2) = labelDraw(2) + labelDraw(2) * 0.10;
-            labelDraw2D(3) = labelDraw(3) * 0.90;
-            labelDraw2D(4) = labelDraw(4) * 0.90;
-            
-            labelDraw3R = labelDraw;
-            labelDraw3R(1) = labelDraw(1) + labelDraw(1) * 0.10;
-            labelDraw3R(3) = labelDraw(3) * 1.10;
-            labelDraw3R(4) = labelDraw(4) * 1.10;
-            
-            labelDraw3U = labelDraw;
-            labelDraw3U(2) = labelDraw(2) + labelDraw(2) * 0.10;
-            labelDraw3U(3) = labelDraw(3) * 1.10;
-            labelDraw3U(4) = labelDraw(4) * 1.10;
-            
-            labelDraw3D = labelDraw;
-            labelDraw3D(1) = labelDraw(1) + labelDraw(1) * 0.10;
-            labelDraw3D(2) = labelDraw(2) + labelDraw(2) * 0.10;
-            labelDraw3D(3) = labelDraw(3) * 1.10;
-            labelDraw3D(4) = labelDraw(4) * 1.10;
-            
-            labelDraw4R = labelDraw;
-            labelDraw4R(1) = labelDraw(1) + labelDraw(1) * 0.10;
-            labelDraw4R(3) = labelDraw(3) * 1.20;
-            labelDraw4R(4) = labelDraw(4) * 1.20;
-            
-            labelDraw4U = labelDraw;
-            labelDraw4U(2) = labelDraw(2) + labelDraw(2) * 0.10;
-            labelDraw4U(3) = labelDraw(3) * 1.20;
-            labelDraw4U(4) = labelDraw(4) * 1.20;
-            
-            labelDraw4D = labelDraw;
-            labelDraw4D(1) = labelDraw(1) + labelDraw(1) * 0.10;
-            labelDraw4D(2) = labelDraw(2) + labelDraw(2) * 0.10;
-            labelDraw4D(3) = labelDraw(3) * 1.20;
-            labelDraw4D(4) = labelDraw(4) * 1.20;
-            
-            rectangle('Position',vesselTrailNow,'EdgeColor',[1 1 0],...
-                    'linewidth',2);
-                
-            
-            
-        else
-            vector=[vector 0];
-        end 
+end
+
+[linLabel colLabel] = find (vesselLabels(:,1) == f+14);
+%boat from label for this frame
+if colLabel == 1
+    labelDraw = [labelDraw vesselLabels(linLabel,2:5)];
+end
+isnotempty = 0;
+if ~isempty(labelDraw)
+    if ~isempty(vesselTrailNow)
+        isnotempty = 1;
+        %se o width for negativo
+        if labelDraw(3) < 0
+            labelDraw(1)=labelDraw(1) + labelDraw(3);
+            labelDraw(3) = abs(labelDraw(3));
+        end
+        %se o height for negativo
+        if labelDraw(4) < 0
+            labelDraw(2)=labelDraw(2) + labelDraw(4);
+            labelDraw(4) = abs(labelDraw(4));
+        end
+        vesselTrail = [vesselTrail; f+1 labelDraw];
+        
+        A = [f+1; labelDraw(1); labelDraw(2); labelDraw(3); labelDraw(4)];
+        
+        vector=[vector bboxOverlapRatio(labelDraw, vesselTrailNow)];
+        rectangle('Position', labelDraw,'EdgeColor',[0 1 0],'linewidth',2);
+        
+        rectangle('Position',vesselTrailNow,'EdgeColor',[1 1 0],...
+            'linewidth',2);
+        
     else
         vector=[vector 0];
     end
-    
-%     mFigureSRE = figure('Name','SRE')
-%     title('Graphic')
-%     xlabel('Distance')    % x-axis label
-%     ylabel('Percentage')  % y-axis label
-%     plot(vesselTrailNow);
-%     grid on
-%     grid minor
-    %xlim([0 1000]); % x-axis limits
-    %ylim([-0.4 0.8]); % y-axis limits
-    
-    
-    
-    drawnow
-   
+else
+    vector=[vector 0];
 end
-% mFigure = figure('Name','IoU')
-% title(ax1,'Graphic')
-% xlabel('???????') % x-axis label
-% ylabel('Ratio') % y-axis label
-% plot(vector);
-% grid on
-% grid minor
+
+vesselTrailNow = [];
+
+drawnow
+
+end
+mFigure = figure('Name','IoU')
+title(ax1,'Graphic')
+xlabel('???????') % x-axis label
+ylabel('Ratio') % y-axis label
+plot(vector);
+grid on
+grid minor
 %xlim([0 1000]); % x-axis limits
 %ylim([-0.4 0.8]); % y-axis limits
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw1R);
-grid on
-grid minor
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw1U);
-grid on
-grid minor
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw1D);
-grid on
-grid minor
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw2R);
-grid on
-grid minor
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw2U);
-grid on
-grid minor
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw2D);
-grid on
-grid minor
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw3R);
-grid on
-grid minor
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw3U);
-grid on
-grid minor
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw3D);
-grid on
-grid minor
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw4R);
-grid on
-grid minor
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw4U);
-grid on
-grid minor
-
-mFigureSRE = figure('Name','SRE: Success Plot')
-title('Graphic')
-xlabel('Distance')    % x-axis label
-ylabel('Frames')      % y-axis label
-plot(labelDraw4D);
-grid on
-grid minor
 
 
 end
