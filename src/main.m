@@ -209,6 +209,19 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                     %                    disp('dist');
                     %                    disp(pdistBetweenVessels);
                     
+                    % ----------- Test Grafic Distance ------------------- %
+    
+%                     boatDistance = [];
+% 
+%                     x = boatDistance; % Distance
+%                     y1 = sin(x);       % SRE
+%                     y2 = sin(x-0.25);  % TVA
+%                     y3 = sin(x-0.5);   % Something
+% 
+%                     figure
+%                     plot(x,y1,x,y2,'--',x,y3,':')
+                    % --------------------------------------------------- %
+                    
                     if pdistBetweenVessels < distanceBetweenVessels
                         %disp('entrou');
                         %remove inds k and m from inds
@@ -455,6 +468,8 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         
         rectangle('Position', labelDraw,'EdgeColor',[0 1 0],'linewidth',2);
     end
+    
+    
     
     drawnow
     
