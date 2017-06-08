@@ -375,8 +375,8 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                 
                 bufferStruct(1).a = arrAllIndsRectangleAux;
                 
-                disp('My Buffer Struct: ');
-                disp(bufferStruct(1));
+%                 disp('My Buffer Struct: ');
+%                 disp(bufferStruct(1));
             end
             %             disp('My Buffer Struct: ');
             %             disp(bufferStruct(1).g);
@@ -451,10 +451,11 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                 
                 %                 rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
                 %                     'linewidth',2);
-                rectangle('Position',bufferStruct(1).a(indsTemp(j,:),:),'EdgeColor',[1 1 0],...
-                    'linewidth',2);
                 disp ('Element to draw');
-                disp (bufferStruct(1).a(indsTemp(j,:),:));
+                disp (bufferStruct(1).a(indsTemp(1,j),:));
+                rectangle('Position',bufferStruct(1).a(indsTemp(1,j),:),'EdgeColor',[1 1 0],...
+                    'linewidth',2);
+                drawnow
                 %%%Temporal Buffer
                 %%add regionProps to j(index) of the buffer
             end
