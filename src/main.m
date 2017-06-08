@@ -116,6 +116,7 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         
         
     else
+        %if iterations > 7 the buffer is full and it's possible to shift
         numFrameIterationsAux = numFrameIterations;
         
         bufferStruct(1).g = bufferStruct(1).f;
@@ -325,6 +326,7 @@ for f = nInitialFrame : stepRoi : nTotalFrames
         % Converting from lin col to rectangle format
         % bufferStruct
         regnumAllInds = length(allInds);
+        %if existes regions to filter with temporal algorithm
         if regnumAllInds
             arrAllIndsRectangleAux = [];
             for j = 1 : regnumAllInds
@@ -334,40 +336,41 @@ for f = nInitialFrame : stepRoi : nTotalFrames
                 %structBufferLine = []; %% First buffer line TOFIX
                 rectangleAux = [fliplr(upLPoint) fliplr(dWindow)];
                 
-                % add the rectangle aux to arrAllIndsRectangleAux
+                % add the rectangleAux to arrAllIndsRectangleAux
                 arrAllIndsRectangleAux = [arrAllIndsRectangleAux; rectangleAux];
-                %%%Temporal Buffer
-                %%add regionProps to j(index) of the buffer
+                disp ('arrAllIndsRectangleAux');
+                disp (arrAllIndsRectangleAux);
                 
             end
             % add the arrAllIndsRectangleAux to buffer first line
             %field = 'a';
             %bufferStruct = setfield(bufferStruct, field, arrAllIndsRectangleAux);
             %bufferStruct(1).bufferStructNames(1);
+            
+            %if numFrameIterations < 7 buffer is not full
             if numFrameIterations < 7
                 numFrameIterationsAux = maxBufferNum;
                 
                 
                 %%%%%%%%%%%%To REcode
-                if numFrameIterations == 1
+                if numFrameIterations == 0
                     bufferStruct(1).g = arrAllIndsRectangleAux;
                 end
-                if numFrameIterations == 2
+                if numFrameIterations == 1
                     bufferStruct(1).f = arrAllIndsRectangleAux;
                 end
-                if numFrameIterations == 3
+                if numFrameIterations == 2
                     bufferStruct(1).e = arrAllIndsRectangleAux;
                 end
-                if numFrameIterations == 4
+                if numFrameIterations == 3
                     bufferStruct(1).d = arrAllIndsRectangleAux;
                 end
-                if numFrameIterations == 5
+                if numFrameIterations == 4
                     bufferStruct(1).c = arrAllIndsRectangleAux;
                 end
-                if numFrameIterations == 6
+                if numFrameIterations == 5
                     bufferStruct(1).b = arrAllIndsRectangleAux;
                 end
-                %%%%%%%%%%%%EndTo REcode
             else
                 
                 bufferStruct(1).a = arrAllIndsRectangleAux;
@@ -377,9 +380,9 @@ for f = nInitialFrame : stepRoi : nTotalFrames
             end
             %             disp('My Buffer Struct: ');
             %             disp(bufferStruct(1).g);
-            %BufferStruct is incremented because buffer will be incremented
-            numFrameIterations = numFrameIterations + 1;
             
+            
+            %%%%%%%%%%%%EndTo REcode
             % ----------------------------------------------------------- %
             %   filtering vessels to know what to print
             % ----------------------------------------------------------- %
@@ -387,76 +390,83 @@ for f = nInitialFrame : stepRoi : nTotalFrames
             
             %%calculates the number of occurencies of vessels in Layers A on
             %%other Layers
+            
+            disp ('bufferStruct(1).a');
+            disp (bufferStruct(1).a);
             [colA,n] = size(bufferStruct(1).a);
             vesselOcurrencies = zeros(1,colA);
             
-
+            
             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).b);
-
+            
             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).c);
-
+            
             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).d);
-
+            
             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).e);
-
+            
             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).f);
-
+            
             vesselOcurrencies = vesselOcurrencies + foundOnBufferLayer(bufferStruct(1).a,bufferStruct(1).g);
             %%NOW vesselOcurrencies has counter with numbers of ocurrencies in
             %%of the vessels in first layer with the rest of the buffer
             
-
+            indsTemp = [];
             for r=1:colA
                 if vesselOcurrencies(1,r) > 4
                     indsTemp = [indsTemp r];
                 end
             end
+            %BufferStruct is incremented because buffer will be incremented
+            numFrameIterations = numFrameIterations + 1;
             
-        end
-        
-        
-        % ------------------------------------------------------ %
-        % END Temporal Validation Algorithm
-        % ------------------------------------------------------ %
-        
-        % ----------------------------------------------------------- %
-        %doing boxes on approved inds
-        % ----------------------------------------------------------- %
-        
-        %regnumAllInds = length(allInds); % change variables
-        
-        %number of yellow boxes to print
-%         if numFrameIterations > 7
-             [nIndsTemp,m] = size(indsTemp);
-%             regnumbufferStruct = m;
+            
+            
+            
+            
+            % ------------------------------------------------------ %
+            % END Temporal Validation Algorithm
+            % ------------------------------------------------------ %
+            
+            % ----------------------------------------------------------- %
+            %doing boxes on approved inds
+            % ----------------------------------------------------------- %
+            
+            %regnumAllInds = length(allInds); % change variables
+            
+            %number of yellow boxes to print
+            %         if numFrameIterations > 7
+            [nIndsTemp,m] = size(indsTemp);
+            %             regnumbufferStruct = m;
             
             %%%if bufferStruct(1).a is a matrix
-%             if regnumbufferStruct > 1
-                %if regnumAllInds % change variables
-                %structBufferLine = [];
-                for j=1: 1: nIndsTemp % change variables
-                    %                 [lin, col] = find(lb == allInds(j));
-                    %                 upLPoint = min([lin col]);
-                    %                 dWindow  = max([lin col]) - upLPoint + 1;
-                    %structBufferLine = []; %% First buffer line TOFIX
-                    
-                    %                 rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
-                    %                     'linewidth',2);
-                    rectangle('Position',bufferStruct(1).a(nIndsTemp(j,:),:),'EdgeColor',[1 1 0],...
-                        'linewidth',2);
-                    
-                    %%%Temporal Buffer
-                    %%add regionProps to j(index) of the buffer
-                end
+            %             if regnumbufferStruct > 1
+            %if regnumAllInds % change variables
+            %structBufferLine = [];
+            for j=1: 1: nIndsTemp % change variables
+                %                 [lin, col] = find(lb == allInds(j));
+                %                 upLPoint = min([lin col]);
+                %                 dWindow  = max([lin col]) - upLPoint + 1;
+                %structBufferLine = []; %% First buffer line TOFIX
                 
-%             else
-%                 reglist = struct([]);
-%             end
+                %                 rectangle('Position',[fliplr(upLPoint) fliplr(dWindow)],'EdgeColor',[1 1 0],...
+                %                     'linewidth',2);
+                rectangle('Position',bufferStruct(1).a(indsTemp(j,:),:),'EdgeColor',[1 1 0],...
+                    'linewidth',2);
+                disp ('Element to draw');
+                disp (bufferStruct(1).a(indsTemp(j,:),:));
+                %%%Temporal Buffer
+                %%add regionProps to j(index) of the buffer
+            end
+            
+            %             else
+            %                 reglist = struct([]);
+            %             end
         end
     end
-    
-    drawnow
-    
+end
+drawnow
+
 end
 
 
