@@ -18,7 +18,7 @@ baseNum = 13;
 % To use txt values use nVesselLabels = nFrames + 1 %
 % nVesselLabels start in 1 and nFrames starts in 0  %
 nTotalFrames = 1533; % Total: 1533
-nInitialFrame = 1450;  % Initial Boat: 12
+nInitialFrame = 12;  % Initial Boat: 12
 
 thr_global = 180; % 180
 thr_diff = 18;    % 18 %60 fails detecting the boat sometimes
@@ -345,36 +345,36 @@ for f = nInitialFrame : stepRoi : nTotalFrames
             
             bufferStruct(1).a = arrAllIndsRectangleAux;
             
-            if f == 13
-                bufferStruct(1).a = [584 1 10 3];
-                disp('13');
-                disp(bufferStruct(1).a);
-            end
-            if f == 250
-                bufferStruct(1).a = [846 746 83 18];
-                 disp('250');
-                disp(bufferStruct(1).a);
-            end
-            if f == 450
-                bufferStruct(1).a = [105 728 28 41];
-                 disp('450');
-                disp(bufferStruct(1).a);
-            end
-            if f == 650
-                bufferStruct(1).a = [1 267 9 12];
-                 disp('650');
-                disp(bufferStruct(1).a);
-            end
-            if f == 880
-                bufferStruct(1).a = [955 31 22 38];
-                 disp('880');
-                disp(bufferStruct(1).a);
-            end
-            if f == 1200
-                bufferStruct(1).a = [193 689 27 80];
-                 disp('1200');
-                disp(bufferStruct(1).a);
-            end
+%             if f == 13
+%                 bufferStruct(1).a = [584 1 10 3];
+%                 disp('13');
+%                 disp(bufferStruct(1).a);
+%             end
+%             if f == 250
+%                 bufferStruct(1).a = [846 746 83 18];
+%                  disp('250');
+%                 disp(bufferStruct(1).a);
+%             end
+%             if f == 450
+%                 bufferStruct(1).a = [105 728 28 41];
+%                  disp('450');
+%                 disp(bufferStruct(1).a);
+%             end
+%             if f == 650
+%                 bufferStruct(1).a = [1 267 9 12];
+%                  disp('650');
+%                 disp(bufferStruct(1).a);
+%             end
+%             if f == 880
+%                 bufferStruct(1).a = [955 31 22 38];
+%                  disp('880');
+%                 disp(bufferStruct(1).a);
+%             end
+%             if f == 1200
+%                 bufferStruct(1).a = [193 689 27 80];
+%                  disp('1200');
+%                 disp(bufferStruct(1).a);
+%             end
 
             
             
@@ -482,6 +482,70 @@ if ~isempty(labelDraw)
         vector=[vector bboxOverlapRatio(labelDraw, vesselTrailNow)];
         rectangle('Position', labelDraw,'EdgeColor',[0 1 0],'linewidth',2);
         
+        labelDraw1R = labelDraw;
+        labelDraw1R(1) = labelDraw(1) + labelDraw(1) * 0.10;
+        labelDraw1R(3) = labelDraw(3) * 0.80;
+        labelDraw1R(4) = labelDraw(4) * 0.80;
+        
+        labelDraw1U = labelDraw;
+        labelDraw1U(2) = labelDraw(2) + labelDraw(2) * 0.10;
+        labelDraw1U(3) = labelDraw(3) * 0.80;
+        labelDraw1U(4) = labelDraw(4) * 0.80;
+        
+        labelDraw1D = labelDraw;
+        labelDraw1D(1) = labelDraw(1) + labelDraw(1) * 0.10;
+        labelDraw1D(2) = labelDraw(2) + labelDraw(2) * 0.10;
+        labelDraw1D(3) = labelDraw(3) * 0.80;
+        labelDraw1D(4) = labelDraw(4) * 0.80;
+        
+        labelDraw2R = labelDraw;
+        labelDraw2R(1) = labelDraw(1) + labelDraw(1) * 0.10;
+        labelDraw2R(3) = labelDraw(3) * 0.90;
+        labelDraw2R(4) = labelDraw(4) * 0.90;
+        
+        labelDraw2U = labelDraw;
+        labelDraw2U(2) = labelDraw(2) + labelDraw(2) * 0.10;
+        labelDraw2U(3) = labelDraw(3) * 0.90;
+        labelDraw2U(4) = labelDraw(4) * 0.90;
+        
+        labelDraw2D = labelDraw;
+        labelDraw2D(1) = labelDraw(1) + labelDraw(1) * 0.10;
+        labelDraw2D(2) = labelDraw(2) + labelDraw(2) * 0.10;
+        labelDraw2D(3) = labelDraw(3) * 0.90;
+        labelDraw2D(4) = labelDraw(4) * 0.90;
+        
+        labelDraw3R = labelDraw;
+        labelDraw3R(1) = labelDraw(1) + labelDraw(1) * 0.10;
+        labelDraw3R(3) = labelDraw(3) * 1.10;
+        labelDraw3R(4) = labelDraw(4) * 1.10;
+        
+        labelDraw3U = labelDraw;
+        labelDraw3U(2) = labelDraw(2) + labelDraw(2) * 0.10;
+        labelDraw3U(3) = labelDraw(3) * 1.10;
+        labelDraw3U(4) = labelDraw(4) * 1.10;
+        
+        labelDraw3D = labelDraw;
+        labelDraw3D(1) = labelDraw(1) + labelDraw(1) * 0.10;
+        labelDraw3D(2) = labelDraw(2) + labelDraw(2) * 0.10;
+        labelDraw3D(3) = labelDraw(3) * 1.10;
+        labelDraw3D(4) = labelDraw(4) * 1.10;
+        
+        labelDraw4R = labelDraw;
+        labelDraw4R(1) = labelDraw(1) + labelDraw(1) * 0.10;
+        labelDraw4R(3) = labelDraw(3) * 1.20;
+        labelDraw4R(4) = labelDraw(4) * 1.20;
+        
+        labelDraw4U = labelDraw;
+        labelDraw4U(2) = labelDraw(2) + labelDraw(2) * 0.10;
+        labelDraw4U(3) = labelDraw(3) * 1.20;
+        labelDraw4U(4) = labelDraw(4) * 1.20;
+        
+        labelDraw4D = labelDraw;
+        labelDraw4D(1) = labelDraw(1) + labelDraw(1) * 0.10;
+        labelDraw4D(2) = labelDraw(2) + labelDraw(2) * 0.10;
+        labelDraw4D(3) = labelDraw(3) * 1.20;
+        labelDraw4D(4) = labelDraw(4) * 1.20;
+        
         rectangle('Position',vesselTrailNow,'EdgeColor',[1 1 0],...
             'linewidth',2);
         
@@ -500,14 +564,110 @@ end
 mFigure = figure('Name','IoU')
 
 
-plot(vector);
-xlabel('Number of Frames') % x-axis label
-ylabel('Ratio') % y-axis label
-title(ax1,'Graphic')
+% plot(vector);
+% xlabel('Number of Frames') % x-axis label
+% ylabel('Ratio') % y-axis label
+% title(ax1,'Graphic')
+% grid on
+% grid minor
+% %xlim([0 1000]); % x-axis limits
+% %ylim([-0.4 0.8]); % y-axis limits
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw1R);
 grid on
 grid minor
-%xlim([0 1000]); % x-axis limits
-%ylim([-0.4 0.8]); % y-axis limits
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw1U);
+grid on
+grid minor
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw1D);
+grid on
+grid minor
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw2R);
+grid on
+grid minor
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw2U);
+grid on
+grid minor
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw2D);
+grid on
+grid minor
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw3R);
+grid on
+grid minor
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw3U);
+grid on
+grid minor
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw3D);
+grid on
+grid minor
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw4R);
+grid on
+grid minor
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw4U);
+grid on
+grid minor
+
+mFigureSRE = figure('Name','SRE: Success Plot')
+title('Graphic')
+xlabel('Distance')    % x-axis label
+ylabel('Frames')      % y-axis label
+plot(labelDraw4D);
+grid on
+grid minor
 
 
 end
